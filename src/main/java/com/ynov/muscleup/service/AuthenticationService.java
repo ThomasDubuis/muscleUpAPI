@@ -2,9 +2,7 @@ package com.ynov.muscleup.service;
 
 import com.ynov.muscleup.config.JwtService;
 import com.ynov.muscleup.model.Customer;
-import com.ynov.muscleup.model.auth.AuthenticationRequest;
-import com.ynov.muscleup.model.auth.AuthenticationResponse;
-import com.ynov.muscleup.model.auth.RegisterRequest;
+import com.ynov.muscleup.model.auth.*;
 import com.ynov.muscleup.model.customer_args.Role;
 import com.ynov.muscleup.model.customer_args.Visibility;
 import com.ynov.muscleup.repository.CustomerRepository;
@@ -56,5 +54,29 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public PasswordChangeResponse changePassword(PasswordChangeRequest request) {
+        Optional<Customer> customerOptional = customerRepository.findByEmail(request.getEmail());
+        if (customerOptional.isEmpty()) {
+            logger.error("Email not used: {}", request.getEmail());
+            return PasswordChangeResponse.builder()
+                    .passwordChanged(false)
+                    .errorMessage("Email not used: " + request.getEmail())
+                    .build();
+        }
+        Customer customer = customerOptional.get();
+        if (passwordEncoder.matches(request.getOldPassword(), customer.getHashedPassword())) {
+            customer.setHashedPassword(passwordEncoder.encode(request.getNewPassword()));
+            customerRepository.save(customer);
+            logger.debug("Password changed for Email : {}", customer.getEmail());
+            return PasswordChangeResponse.builder().passwordChanged(true).build();
+
+        }else {
+            logger.error("Email and password do not match");
+            return PasswordChangeResponse.builder().passwordChanged(false).errorMessage("Email and password do not match").build();
+        }
+
+
     }
 }

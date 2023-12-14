@@ -1,8 +1,6 @@
 package com.ynov.muscleup.controller;
 
-import com.ynov.muscleup.model.auth.AuthenticationRequest;
-import com.ynov.muscleup.model.auth.AuthenticationResponse;
-import com.ynov.muscleup.model.auth.RegisterRequest;
+import com.ynov.muscleup.model.auth.*;
 import com.ynov.muscleup.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -19,15 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private static final Logger logger = LogManager.getLogger(AuthenticationController.class);
 
+    private static final String ALL_ARG_NOT_PROVIDED = "All args are not provided";
+    private static final String PASSWORD_NOT_SAME = "Password are not same";
+
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         if (!request.isAllArgsFill() ) {
-            logger.error("All args are not provided");
+            logger.error(ALL_ARG_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         } else if (!request.isSamePassword()) {
-            logger.error("Password are not same");
+            logger.error(PASSWORD_NOT_SAME);
             return ResponseEntity.badRequest().build();
         }
         return authenticationService.register(request);
@@ -36,11 +37,25 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         if (!request.isAllArgsFill()){
-            logger.error("All args are not provided");
+            logger.error(ALL_ARG_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         }
 
         return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
+    @PostMapping("/changepwd")
+    public ResponseEntity<PasswordChangeResponse> changePassword(@RequestBody PasswordChangeRequest request) {
+        if (!request.isAllArgsFill()){
+            logger.error(ALL_ARG_NOT_PROVIDED);
+            return ResponseEntity.badRequest().body(PasswordChangeResponse.builder().passwordChanged(false).errorMessage(ALL_ARG_NOT_PROVIDED).build());
+        }
+        if (!request.checkOldPasswordAreSame() || !request.checkNewPasswordAreSame()) {
+            logger.error(PASSWORD_NOT_SAME);
+            return ResponseEntity.badRequest().body(PasswordChangeResponse.builder().passwordChanged(false).errorMessage(PASSWORD_NOT_SAME).build());
+        }
+        return ResponseEntity.ok(authenticationService.changePassword(request));
+
     }
 
 }
