@@ -9,20 +9,33 @@ import com.ynov.muscleup.model.customer_args.Role;
 import com.ynov.muscleup.model.customer_args.Visibility;
 import com.ynov.muscleup.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+    private static final Logger logger = LogManager.getLogger(AuthenticationService.class);
 
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    public AuthenticationResponse register(RegisterRequest request) {
+
+    public ResponseEntity<AuthenticationResponse> register(RegisterRequest request) {
+        Optional<Customer> customer = customerRepository.findByEmail(request.getEmail());
+        if (customer.isPresent()) {
+            logger.error("Email already used: {}", request.getEmail());
+            return ResponseEntity.badRequest().build();
+        }
+
         var user = Customer.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -34,7 +47,7 @@ public class AuthenticationService {
         customerRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return ResponseEntity.ok(AuthenticationResponse.builder().token(jwtToken).build());
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

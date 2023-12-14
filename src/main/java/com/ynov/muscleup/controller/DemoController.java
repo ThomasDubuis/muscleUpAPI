@@ -9,7 +9,6 @@ import com.ynov.muscleup.model.customer_args.Visibility;
 import com.ynov.muscleup.repository.CategoryRepository;
 import com.ynov.muscleup.repository.CustomerRepository;
 import com.ynov.muscleup.repository.RankRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,13 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/demo-controller")
 public class DemoController {
 
-    @Autowired
     CategoryRepository categoryRepository;
-
-    @Autowired
     CustomerRepository customerRepository;
-
-    @Autowired
     RankRepository rankRepository;
 
 
