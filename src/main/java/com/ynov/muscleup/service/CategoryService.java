@@ -35,7 +35,7 @@ public class CategoryService {
             categoryRepository.delete(categoryOptional.get());
             return categoryOptional.get();
         }else {
-            logger.warn("Id does not exist in Category");
+            logger.error("Id does not exist in Category");
             return null;
         }
 
@@ -48,7 +48,7 @@ public class CategoryService {
             category.updateIfNotNull(request);
             return categoryRepository.save(category);
         }else {
-            logger.warn("Id does not exist in Category");
+            logger.error("Id does not exist in Category");
             return null;
         }
     }

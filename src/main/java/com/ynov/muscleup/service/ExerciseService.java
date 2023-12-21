@@ -36,7 +36,7 @@ public class ExerciseService {
             exerciseRepository.delete(exerciseOptional.get());
             return exerciseOptional.get();
         }else {
-            logger.warn("Id does not exist in Exercise");
+            logger.error("Id does not exist in Exercise");
             return null;
         }
 
@@ -50,7 +50,7 @@ public class ExerciseService {
 
             return exerciseRepository.save(exercise);
         }else {
-            logger.warn("Id does not exist in Exercise");
+            logger.error("Id does not exist in Exercise");
             return null;
         }
     }

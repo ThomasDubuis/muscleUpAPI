@@ -36,7 +36,7 @@ public class GymService {
             gymRepository.delete(gymOptional.get());
             return gymOptional.get();
         }else {
-            logger.warn("Id does not exist in Gym");
+            logger.error("Id does not exist in Gym");
             return null;
         }
 
@@ -50,7 +50,7 @@ public class GymService {
 
             return gymRepository.save(gym);
         }else {
-            logger.warn("Id does not exist in Gym");
+            logger.error("Id does not exist in Gym");
             return null;
         }
     }

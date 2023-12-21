@@ -46,7 +46,7 @@ public class AdminController {
     @PutMapping ("/updateCategory")
     public ResponseEntity<Category> updateCategory(@RequestBody Category request) {
         if (request.getId() == null || request.getId().isEmpty()) {
-            logger.warn(ID_NOT_PROVIDED);
+            logger.error(ID_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         }
         Category category = categoryService.updateCategory(request);
@@ -69,7 +69,7 @@ public class AdminController {
     @PutMapping ("/updateExercise")
     public ResponseEntity<Exercise> updateExercise(@RequestBody Exercise request) {
         if (request.getId() == null || request.getId().isEmpty()) {
-            logger.warn(ID_NOT_PROVIDED);
+            logger.error(ID_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         }
         Exercise exercise = exerciseService.updateExercise(request);
@@ -91,7 +91,7 @@ public class AdminController {
     @PutMapping ("/updateGym")
     public ResponseEntity<Gym> updateGym(@RequestBody Gym request) {
         if (request.getId() == null || request.getId().isEmpty()) {
-            logger.warn(ID_NOT_PROVIDED);
+            logger.error(ID_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         }
         Gym gym = gymService.updateGym(request);

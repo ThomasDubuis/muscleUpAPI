@@ -26,11 +26,11 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         if (!request.isAllArgsFill() ) {
-            logger.warn(ALL_ARG_NOT_PROVIDED);
+            logger.error(ALL_ARG_NOT_PROVIDED);
             authenticationResponse.setMessage(ALL_ARG_NOT_PROVIDED);
             return ResponseEntity.badRequest().body(authenticationResponse);
         } else if (!request.isSamePassword()) {
-            logger.warn(PASSWORD_NOT_SAME);
+            logger.error(PASSWORD_NOT_SAME);
             authenticationResponse.setMessage(PASSWORD_NOT_SAME);
             return ResponseEntity.badRequest().body(authenticationResponse);
         }
@@ -40,7 +40,7 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         if (!request.isAllArgsFill()){
-            logger.warn(ALL_ARG_NOT_PROVIDED);
+            logger.error(ALL_ARG_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         }
 
@@ -50,11 +50,11 @@ public class AuthenticationController {
     @PostMapping("/changepwd")
     public ResponseEntity<PasswordChangeResponse> changePassword(@RequestBody PasswordChangeRequest request) {
         if (!request.isAllArgsFill()){
-            logger.warn(ALL_ARG_NOT_PROVIDED);
+            logger.error(ALL_ARG_NOT_PROVIDED);
             return ResponseEntity.badRequest().body(PasswordChangeResponse.builder().passwordChanged(false).errorMessage(ALL_ARG_NOT_PROVIDED).build());
         }
         if (!request.checkOldPasswordAreSame() || !request.checkNewPasswordAreSame()) {
-            logger.warn(PASSWORD_NOT_SAME);
+            logger.error(PASSWORD_NOT_SAME);
             return ResponseEntity.badRequest().body(PasswordChangeResponse.builder().passwordChanged(false).errorMessage(PASSWORD_NOT_SAME).build());
         }
         return ResponseEntity.ok(authenticationService.changePassword(request));
