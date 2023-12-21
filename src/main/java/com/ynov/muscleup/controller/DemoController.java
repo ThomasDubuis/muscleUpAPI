@@ -17,7 +17,7 @@ public class DemoController {
     RankRepository rankRepository;
 
 
-    @GetMapping
+    @GetMapping("/hello")
     public ResponseEntity<String> sayHello() {
 
         return  ResponseEntity.ok("Hello from secured endpoint");

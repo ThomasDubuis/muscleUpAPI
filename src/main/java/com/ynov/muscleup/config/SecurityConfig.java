@@ -1,5 +1,6 @@
 package com.ynov.muscleup.config;
 
+import com.ynov.muscleup.model.customer_args.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/auth/**")
                         .permitAll()
+                        .requestMatchers("/admin/**")
+                        .hasAuthority(Role.ADMIN.name())
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(sessionManagement -> sessionManagement

@@ -30,7 +30,7 @@ public class AuthenticationService {
     public ResponseEntity<AuthenticationResponse> register(RegisterRequest request) {
         Optional<Customer> customer = customerRepository.findByEmail(request.getEmail());
         if (customer.isPresent()) {
-            logger.error("Email already used: {}", request.getEmail());
+            logger.warn("Email already used: {}", request.getEmail());
             return ResponseEntity.badRequest().build();
         }
 
@@ -59,7 +59,7 @@ public class AuthenticationService {
     public PasswordChangeResponse changePassword(PasswordChangeRequest request) {
         Optional<Customer> customerOptional = customerRepository.findByEmail(request.getEmail());
         if (customerOptional.isEmpty()) {
-            logger.error("Email not used: {}", request.getEmail());
+            logger.warn("Email not used: {}", request.getEmail());
             return PasswordChangeResponse.builder()
                     .passwordChanged(false)
                     .errorMessage("Email not used: " + request.getEmail())
@@ -73,7 +73,7 @@ public class AuthenticationService {
             return PasswordChangeResponse.builder().passwordChanged(true).build();
 
         }else {
-            logger.error("Email and password do not match");
+            logger.warn("Email and password do not match");
             return PasswordChangeResponse.builder().passwordChanged(false).errorMessage("Email and password do not match").build();
         }
 
