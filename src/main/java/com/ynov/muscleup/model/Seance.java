@@ -26,5 +26,5 @@ public class Seance {
     private Gym gym;
     @ManyToOne @JoinColumn(name = "categoryId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
-    private double score;
+    private Double score;
 }

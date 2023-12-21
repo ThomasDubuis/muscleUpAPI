@@ -21,5 +21,5 @@ public class Rank {
     private Customer customer;
     @ManyToOne @JoinColumn(name = "categoryId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
-    private double score;
+    private Double score;
 }

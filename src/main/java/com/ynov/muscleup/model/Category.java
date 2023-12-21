@@ -18,5 +18,12 @@ public class Category {
     private String name;
     private String description;
 
-
+    public void updateIfNotNull(Category category) {
+        if (category.name != null && !category.name.isBlank()) {
+            this.name = category.name;
+        }
+        if (category.description != null && !category.description.isBlank()) {
+            this.description = category.description;
+        }
+    }
 }

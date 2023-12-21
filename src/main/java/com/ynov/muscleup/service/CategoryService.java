@@ -19,6 +19,10 @@ public class CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
+    public Optional<Category> getCategory(IdRequest id) {
+        return categoryRepository.findById(id.getId());
+    }
+
     public Category addCategory(Category category) {
         Optional<Category> categoryOptional = categoryRepository.findByName(category.getName());
         if (categoryOptional.isEmpty()) {
@@ -44,7 +48,9 @@ public class CategoryService {
     public Category updateCategory(Category request) {
         Optional<Category> categoryOptional = categoryRepository.findById(request.getId());
         if (categoryOptional.isPresent()) {
-            return categoryRepository.save(request);
+            Category category = categoryOptional.get();
+            category.updateIfNotNull(request);
+            return categoryRepository.save(category);
         }else {
             logger.warn("Id does not exist in Category");
             return null;

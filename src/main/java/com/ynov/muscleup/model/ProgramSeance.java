@@ -19,8 +19,8 @@ public class ProgramSeance {
     private String id;
     @ManyToOne @JoinColumn(name = "seanceId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
     private Seance seance;
-    @ManyToOne @JoinColumn(name = "exerciceId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
-    private Exercice exercice;
-    private int numberOfRep;
-    private double weight;
+    @ManyToOne @JoinColumn(name = "exerciseId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
+    private Exercise exercise;
+    private Integer numberOfRep;
+    private Double weight;
 }
