@@ -28,10 +28,12 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public ResponseEntity<AuthenticationResponse> register(RegisterRequest request) {
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         Optional<Customer> customer = customerRepository.findByEmail(request.getEmail());
         if (customer.isPresent()) {
             logger.warn("Email already used: {}", request.getEmail());
-            return ResponseEntity.badRequest().build();
+            authenticationResponse.setMessage("Email already used: " + request.getEmail());
+            return ResponseEntity.badRequest().body(authenticationResponse);
         }
 
         var user = Customer.builder()

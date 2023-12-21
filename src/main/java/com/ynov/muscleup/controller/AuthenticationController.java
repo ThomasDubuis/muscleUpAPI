@@ -24,12 +24,15 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         if (!request.isAllArgsFill() ) {
             logger.warn(ALL_ARG_NOT_PROVIDED);
-            return ResponseEntity.badRequest().build();
+            authenticationResponse.setMessage(ALL_ARG_NOT_PROVIDED);
+            return ResponseEntity.badRequest().body(authenticationResponse);
         } else if (!request.isSamePassword()) {
             logger.warn(PASSWORD_NOT_SAME);
-            return ResponseEntity.badRequest().build();
+            authenticationResponse.setMessage(PASSWORD_NOT_SAME);
+            return ResponseEntity.badRequest().body(authenticationResponse);
         }
         return authenticationService.register(request);
     }
