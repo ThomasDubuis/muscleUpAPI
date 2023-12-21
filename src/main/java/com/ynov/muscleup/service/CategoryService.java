@@ -19,10 +19,6 @@ public class CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
-    public Optional<Category> getCategory(IdRequest id) {
-        return categoryRepository.findById(id.getId());
-    }
-
     public Category addCategory(Category category) {
         Optional<Category> categoryOptional = categoryRepository.findByName(category.getName());
         if (categoryOptional.isEmpty()) {

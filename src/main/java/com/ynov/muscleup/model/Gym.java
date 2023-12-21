@@ -24,4 +24,25 @@ public class Gym {
     private String department;
     private String region;
     private String country;
+
+    public void updateIfNotNull(Gym gym) {
+        if (gym.name != null && !gym.name.isBlank()) {
+            this.name = gym.name;
+        }
+        if (gym.groupName != null && !gym.groupName.isBlank()) {
+            this.groupName = gym.groupName;
+        }
+        if (gym.city != null && !gym.city.isBlank()) {
+            this.city = gym.city;
+        }
+        if (gym.department != null && !gym.department.isBlank()) {
+            this.department = gym.department;
+        }
+        if (gym.region != null && !gym.region.isBlank()) {
+            this.region = gym.region;
+        }
+        if (gym.country != null && !gym.country.isBlank()) {
+            this.country = gym.country;
+        }
+    }
 }

@@ -2,9 +2,11 @@ package com.ynov.muscleup.controller;
 
 import com.ynov.muscleup.model.Category;
 import com.ynov.muscleup.model.Exercise;
+import com.ynov.muscleup.model.Gym;
 import com.ynov.muscleup.model.utils.IdRequest;
 import com.ynov.muscleup.service.CategoryService;
 import com.ynov.muscleup.service.ExerciseService;
+import com.ynov.muscleup.service.GymService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +16,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-
     private static final Logger logger = LogManager.getLogger(AdminController.class);
+
+    private static final String ID_NOT_PROVIDED = "Id not provided";
 
     @Autowired
     CategoryService categoryService;
     @Autowired
     ExerciseService exerciseService;
+    @Autowired
+    GymService gymService;
 
     @GetMapping("/helloadmin")
     public ResponseEntity<String> sayHelloOnlyAdmin() {
@@ -41,7 +46,7 @@ public class AdminController {
     @PutMapping ("/updateCategory")
     public ResponseEntity<Category> updateCategory(@RequestBody Category request) {
         if (request.getId() == null || request.getId().isEmpty()) {
-            logger.warn("Id not provided");
+            logger.warn(ID_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         }
         Category category = categoryService.updateCategory(request);
@@ -64,10 +69,32 @@ public class AdminController {
     @PutMapping ("/updateExercise")
     public ResponseEntity<Exercise> updateExercise(@RequestBody Exercise request) {
         if (request.getId() == null || request.getId().isEmpty()) {
-            logger.warn("Id not provided");
+            logger.warn(ID_NOT_PROVIDED);
             return ResponseEntity.badRequest().build();
         }
         Exercise exercise = exerciseService.updateExercise(request);
         return exercise == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(exercise);
+    }
+
+
+    @PostMapping("/addGym")
+    public ResponseEntity<Gym> addGym(@RequestBody Gym request) {
+        return  ResponseEntity.ok(gymService.addGym(request));
+    }
+
+    @DeleteMapping("/deleteGym")
+    public ResponseEntity<Gym> deleteGym(@RequestBody IdRequest id) {
+        Gym gym = gymService.deleteGym(id);
+        return gym == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(gym);
+    }
+
+    @PutMapping ("/updateGym")
+    public ResponseEntity<Gym> updateGym(@RequestBody Gym request) {
+        if (request.getId() == null || request.getId().isEmpty()) {
+            logger.warn(ID_NOT_PROVIDED);
+            return ResponseEntity.badRequest().build();
+        }
+        Gym gym = gymService.updateGym(request);
+        return gym == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(gym);
     }
 }

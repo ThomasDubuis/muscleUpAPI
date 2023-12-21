@@ -20,10 +20,6 @@ public class ExerciseService {
     @Autowired
     ExerciseRepository exerciseRepository;
 
-    public Optional<Exercise> getExercise(IdRequest id) {
-        return exerciseRepository.findById(id.getId());
-    }
-
     public Exercise addExercise(Exercise exercise) {
         Optional<Exercise> exerciseOptional = exerciseRepository.findByName(exercise.getName());
         if (exerciseOptional.isEmpty()) {
