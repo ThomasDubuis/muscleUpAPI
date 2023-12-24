@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,5 +54,9 @@ public class ExerciseService {
             logger.error("Id does not exist in Exercise");
             return null;
         }
+    }
+
+    public List<Exercise> getExercises() {
+        return exerciseRepository.findAll();
     }
 }

@@ -1,25 +1,15 @@
 package com.ynov.muscleup.controller;
 
-import com.ynov.muscleup.model.Category;
-import com.ynov.muscleup.model.Customer;
-import com.ynov.muscleup.model.InscriptionGym;
-import com.ynov.muscleup.model.Rank;
-import com.ynov.muscleup.model.customer_args.Role;
-import com.ynov.muscleup.model.customer_args.Visibility;
+import com.ynov.muscleup.model.*;
 import com.ynov.muscleup.model.utils.IdRequest;
-import com.ynov.muscleup.repository.CustomerRepository;
-import com.ynov.muscleup.repository.RankRepository;
-import com.ynov.muscleup.service.CategoryService;
-import com.ynov.muscleup.service.CustomerService;
-import com.ynov.muscleup.service.InscriptionGymService;
+import com.ynov.muscleup.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -27,13 +17,20 @@ public class UserController {
     private static final Logger logger = LogManager.getLogger(UserController.class);
 
     @Autowired
-    CategoryService categoryService;
-
-    @Autowired
     CustomerService customerService;
 
     @Autowired
+    CategoryService categoryService;
+
+    @Autowired
+    GymService gymService;
+
+    @Autowired
+    ExerciseService exerciseService;
+
+    @Autowired
     InscriptionGymService inscriptionGymService;
+
 
 
     @GetMapping("/hello")
@@ -43,9 +40,29 @@ public class UserController {
         return  ResponseEntity.ok("Hello from secured endpoint");
     }
 
+    @GetMapping("/getMe")
+    public ResponseEntity<Customer> getMe() {
+        return ResponseEntity.ok(customerService.getCurrentCustomer());
+    }
+
+    @GetMapping("/getCategories")
+    public ResponseEntity<List<Category>> getCategories() {
+        return ResponseEntity.ok(categoryService.getCategories());
+    }
+
+    @GetMapping("/getGyms")
+    public ResponseEntity<List<Gym>> getGyms() {
+        return ResponseEntity.ok(gymService.getGyms());
+    }
+
+    @GetMapping("/getExercises")
+    public ResponseEntity<List<Exercise>> getExercises() {
+        return ResponseEntity.ok(exerciseService.getExercises());
+    }
+
     @PostMapping("/signUpToGym")
-    public ResponseEntity<InscriptionGym> signUpToGym(IdRequest gymId) {
-        if (gymId == null || gymId.getId() == null ||gymId.getId().isBlank()) {
+    public ResponseEntity<InscriptionGym> signUpToGym(@RequestBody IdRequest gymId) {
+        if (gymId == null || gymId.getId() == null || gymId.getId().isBlank()) {
             logger.error("GymId is empty or null");
             return ResponseEntity.badRequest().build();
         }

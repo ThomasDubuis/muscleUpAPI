@@ -28,7 +28,6 @@ public class InscriptionGymService {
     CustomerService customerService;
 
     public InscriptionGym signUpToGym(IdRequest gymId) {
-        //TODO Test this method
         Date date = new Date();
         Optional<Gym> gym = gymRepository.findById(gymId.getId());
 
