@@ -24,7 +24,5 @@ public class Seance {
     private Customer customer;
     @ManyToOne @JoinColumn(name = "GymId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
     private Gym gym;
-    @ManyToOne @JoinColumn(name = "categoryId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
-    private Category category;
     private Double score;
 }

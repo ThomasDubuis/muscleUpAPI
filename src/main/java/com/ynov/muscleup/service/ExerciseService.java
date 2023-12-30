@@ -59,4 +59,10 @@ public class ExerciseService {
     public List<Exercise> getExercises() {
         return exerciseRepository.findAll();
     }
+
+    public boolean checkIfExerciseExist(String exerciseId) {
+        Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
+        return exerciseOptional.isPresent();
+
+    }
 }
