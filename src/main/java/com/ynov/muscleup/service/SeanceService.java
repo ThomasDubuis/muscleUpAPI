@@ -65,7 +65,7 @@ public class SeanceService {
                 .gym(gym)
                 .build();
 
-        //TODO : mettre les programSeance dans l'objet seance pour pouvoir uniquement retourner seance
+
         Seance seanceRegistered = seanceRepository.save(seance);
 
         for (ProgramSeance programSeance: programSeances) {
@@ -76,6 +76,8 @@ public class SeanceService {
         //TODO : Calculate new rank (créer une methode calculate new rank dans rankService qui permet de mettre a jour tous les ranks)
 
         return seanceRegistered;
+        //TODO : Voir pk lors du FindById dans cette methode ne get pas les program seance
+        // alors que lorsque l'endpoint est appelé il les get bien
     }
 
     public Optional<Seance> getSeanceById(String seanceId) {
