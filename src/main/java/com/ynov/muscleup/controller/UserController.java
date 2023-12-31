@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -96,11 +95,11 @@ public class UserController {
             logger.error("seanceId is empty or null");
             return ResponseEntity.badRequest().build();
         }
-        Optional<Seance> seance = seanceService.getSeanceById(seanceId);
-        if (seance.isEmpty()) {
-            logger.warn("Seance not exist in database");
-            return ResponseEntity.ok().build();
+        Seance seance = seanceService.getSeanceById(seanceId);
+        if (seance == null) {
+            logger.error("Seance not exist or not for this customer");
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(seance.get());
+        return ResponseEntity.ok(seance);
     }
 }

@@ -10,7 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +82,17 @@ public class SeanceService {
         // alors que lorsque l'endpoint est appelé il les get bien
     }
 
-    public Optional<Seance> getSeanceById(String seanceId) {
-        return seanceRepository.findById(seanceId);
+    public Seance getSeanceById(String seanceId) {
+        Optional<Seance> seance = seanceRepository.findById(seanceId);
+        if (seance.isEmpty()){
+            return null;
+        }
+        Customer customer = customerService.getCurrentCustomer();
+
+        if (seance.get().getCustomer().getEmail().equals(customer.getEmail())){
+            return seance.get();
+        }else {
+            return null;
+        }
     }
 }
