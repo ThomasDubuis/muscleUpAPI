@@ -11,6 +11,9 @@ java {
     sourceCompatibility = '17'
 }
 
+bootRun {
+    mainClass = 'com.ynov.muscleup.MuscleUpApplication'
+}
 configurations {
     compileOnly {
         extendsFrom annotationProcessor

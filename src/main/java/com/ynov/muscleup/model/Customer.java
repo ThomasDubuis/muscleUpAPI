@@ -33,7 +33,7 @@ public class Customer implements UserDetails {
     @JsonIgnore
     private Role role;
     @Enumerated(EnumType.STRING)
-    private Visibility visibility = Visibility.ALL;
+    private Visibility visibility;
 
     @Override
     @JsonIgnore
