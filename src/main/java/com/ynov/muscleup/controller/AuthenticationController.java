@@ -39,11 +39,12 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         if (!request.isAllArgsFill()){
             logger.error(ALL_ARG_NOT_PROVIDED);
-            return ResponseEntity.badRequest().build();
+            authenticationResponse.setMessage(ALL_ARG_NOT_PROVIDED);
+            return ResponseEntity.badRequest().body(authenticationResponse);
         }
-
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
@@ -58,7 +59,6 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(PasswordChangeResponse.builder().passwordChanged(false).errorMessage(PASSWORD_NOT_SAME).build());
         }
         return ResponseEntity.ok(authenticationService.changePassword(request));
-
     }
 
 }
