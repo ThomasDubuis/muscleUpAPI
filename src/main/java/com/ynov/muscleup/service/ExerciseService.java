@@ -40,7 +40,6 @@ public class ExerciseService {
             logger.error("Id does not exist in Exercise");
             return null;
         }
-
     }
 
     public Exercise updateExercise(Exercise request) {
@@ -63,6 +62,5 @@ public class ExerciseService {
     public boolean checkIfExerciseExist(String exerciseId) {
         Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
         return exerciseOptional.isPresent();
-
     }
 }

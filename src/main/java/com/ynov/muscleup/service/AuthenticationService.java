@@ -78,7 +78,5 @@ public class AuthenticationService {
             logger.warn("Email and password do not match");
             return PasswordChangeResponse.builder().passwordChanged(false).errorMessage("Email and password do not match").build();
         }
-
-
     }
 }

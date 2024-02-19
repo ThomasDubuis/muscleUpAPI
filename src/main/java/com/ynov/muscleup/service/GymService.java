@@ -53,7 +53,6 @@ public class GymService {
             logger.error(GYM_ID_NOT_EXIST);
             return null;
         }
-
     }
 
     public Gym updateGym(Gym request) {
@@ -89,9 +88,6 @@ public class GymService {
         inscriptionGym.setCustomer(customerService.getCurrentCustomer());
 
         return inscriptionGymRepository.save(inscriptionGym);
-
-
-
     }
 
     public Gym getGymIfCustomerIsRegistered(Customer customer, String gymId) {

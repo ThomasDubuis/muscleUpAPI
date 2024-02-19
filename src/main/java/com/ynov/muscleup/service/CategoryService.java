@@ -39,7 +39,6 @@ public class CategoryService {
             logger.error("Id does not exist in Category");
             return null;
         }
-
     }
 
     public Category updateCategory(Category request) {
