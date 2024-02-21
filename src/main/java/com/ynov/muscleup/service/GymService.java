@@ -60,7 +60,6 @@ public class GymService {
         if (gymOptional.isPresent()) {
             Gym gym = gymOptional.get();
             gym.updateIfNotNull(request);
-
             return gymRepository.save(gym);
         }else {
             logger.error(GYM_ID_NOT_EXIST);
