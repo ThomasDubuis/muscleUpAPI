@@ -76,6 +76,7 @@ public class SeanceService {
         programSeanceRepository.saveAll(programSeances);
 
         //TODO : Calculate new rank (créer une methode calculate new rank dans rankService qui permet de mettre a jour tous les ranks)
+        // et faire les TU avec
 
         return seanceRegistered;
         //TODO : Voir pk lors du FindById dans cette methode ne get pas les program seance
