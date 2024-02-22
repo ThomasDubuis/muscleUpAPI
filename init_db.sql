@@ -1,0 +1,2 @@
+CREATE DATABASE muscleup;
+CREATE DATABASE sonar;
