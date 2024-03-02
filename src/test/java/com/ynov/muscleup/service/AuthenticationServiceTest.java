@@ -2,6 +2,7 @@ package com.ynov.muscleup.service;
 
 
 import com.ynov.muscleup.config.JwtService;
+import com.ynov.muscleup.model.BaseResponse;
 import com.ynov.muscleup.model.Customer;
 import com.ynov.muscleup.model.auth.*;
 import com.ynov.muscleup.model.customer_args.Role;
@@ -45,10 +46,10 @@ class AuthenticationServiceTest {
         RegisterRequest request = RegisterRequest.builder().email("emailAlreadyExist@gmail.com").build();
         when(customerRepository.findByEmail("emailAlreadyExist@gmail.com")).thenReturn(Optional.of(new Customer()));
 
-        ResponseEntity<AuthenticationResponse> response = authenticationService.register(request);
+        ResponseEntity<BaseResponse<AuthenticationResponse>> response = authenticationService.register(request);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Email already used: emailAlreadyExist@gmail.com", Objects.requireNonNull(response.getBody()).getMessage());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Email already used: emailAlreadyExist@gmail.com", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -57,11 +58,11 @@ class AuthenticationServiceTest {
         when(customerRepository.findByEmail("JoeLeJoe@gmail.com")).thenReturn(Optional.empty());
         when(jwtService.generateToken(any())).thenReturn(TOKEN);
 
-        ResponseEntity<AuthenticationResponse> response = authenticationService.register(request);
+        ResponseEntity<BaseResponse<AuthenticationResponse>> response = authenticationService.register(request);
 
         verify(customerRepository, times(1)).save(any());
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(TOKEN, Objects.requireNonNull(response.getBody()).getToken());
+        assertEquals(TOKEN, Objects.requireNonNull(response.getBody()).getResult().getToken());
     }
 
     @Test

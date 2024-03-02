@@ -17,8 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 class UserControllerTest {
@@ -44,16 +43,17 @@ class UserControllerTest {
         Customer customer = new Customer("1", "Joe", "LeJoe", "JoeLeJoe@gmail.com", null, Role.USER, Visibility.ALL);
         Mockito.when(customerService.getCurrentCustomer()).thenReturn(customer);
 
-        ResponseEntity<Customer> response = userController.getMe();
+        ResponseEntity<BaseResponse<Customer>> response = userController.getMe();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Joe", Objects.requireNonNull(response.getBody()).getFirstname());
-        assertEquals("LeJoe", Objects.requireNonNull(response.getBody()).getLastname());
-        assertEquals("JoeLeJoe@gmail.com", Objects.requireNonNull(response.getBody()).getEmail());
-        assertNull(Objects.requireNonNull(response.getBody()).getHashedPassword());
-        assertEquals(Role.USER, Objects.requireNonNull(response.getBody()).getRole());
-        assertEquals(Visibility.ALL, Objects.requireNonNull(response.getBody()).getVisibility());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        Customer result = Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult());
+        assertEquals("Joe", result.getFirstname());
+        assertEquals("LeJoe", result.getLastname());
+        assertEquals("JoeLeJoe@gmail.com", result.getEmail());
+        assertNull(result.getHashedPassword());
+        assertEquals(Role.USER, result.getRole());
+        assertEquals(Visibility.ALL, result.getVisibility());
+        assertEquals("1", result.getId());
     }
 
     @Test
@@ -64,10 +64,10 @@ class UserControllerTest {
 
         Mockito.when(categoryService.getCategories()).thenReturn(categoryList);
 
-        ResponseEntity<List<Category>> response = userController.getCategories();
+        ResponseEntity<BaseResponse<List<Category>>> response = userController.getCategories();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        assertEquals(2, Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).size());
     }
 
     @Test
@@ -78,10 +78,10 @@ class UserControllerTest {
 
         Mockito.when(gymService.getGyms()).thenReturn(gymList);
 
-        ResponseEntity<List<Gym>> response = userController.getGyms();
+        ResponseEntity<BaseResponse<List<Gym>>> response = userController.getGyms();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        assertEquals(2, Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).size());
     }
 
     @Test
@@ -92,10 +92,10 @@ class UserControllerTest {
 
         Mockito.when(exerciseService.getExercises()).thenReturn(exerciseList);
 
-        ResponseEntity<List<Exercise>> response = userController.getExercises();
+        ResponseEntity<BaseResponse<List<Exercise>>> response = userController.getExercises();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
+        assertEquals(2, Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).size());
     }
 
     @Test
@@ -104,19 +104,20 @@ class UserControllerTest {
         InscriptionGym inscriptionGym = new InscriptionGym("1", new Customer(), new Gym(), DATE);
         Mockito.when(gymService.signUpToGym(request)).thenReturn(inscriptionGym);
 
-        ResponseEntity<InscriptionGym> response = userController.signUpToGym(request);
+        ResponseEntity<BaseResponse<InscriptionGym>> response = userController.signUpToGym(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
-        assertEquals(DATE, Objects.requireNonNull(response.getBody()).getDate());
+        assertEquals("1", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getId());
+        assertEquals(DATE, Objects.requireNonNull(response.getBody().getResult()).getDate());
     }
 
     @Test
     void signUpToGymWithMissingIdShouldReturnBadRequest() {
         IdRequest request = new IdRequest();
-        ResponseEntity<InscriptionGym> response = userController.signUpToGym(request);
+        ResponseEntity<BaseResponse<InscriptionGym>> response = userController.signUpToGym(request);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("GymId is empty or null", Objects.requireNonNull(response.getBody()).getErrorMessage());
     }
 
     @Test
@@ -124,9 +125,10 @@ class UserControllerTest {
         IdRequest request = new IdRequest("1");
         Mockito.when(gymService.signUpToGym(request)).thenReturn(null);
 
-        ResponseEntity<InscriptionGym> response = userController.signUpToGym(request);
+        ResponseEntity<BaseResponse<InscriptionGym>> response = userController.signUpToGym(request);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id does not exist in Gym", Objects.requireNonNull(response.getBody()).getErrorMessage());
     }
 
     @Test
@@ -137,21 +139,22 @@ class UserControllerTest {
 
         Seance seance = new Seance("1", DATE, new Customer(), new Gym(), 1d, new ArrayList<>());
 
-        Mockito.when(seanceService.postCompleteSeance(seanceRequest)).thenReturn(seance);
+        Mockito.when(seanceService.postCompleteSeance(seanceRequest)).thenReturn(BaseResponse.ok(seance));
 
-        ResponseEntity<Seance> response = userController.postCompleteSeance(seanceRequest);
+        ResponseEntity<BaseResponse<Seance>> response = userController.postCompleteSeance(seanceRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
-        assertEquals(DATE, Objects.requireNonNull(response.getBody()).getDate());
+        assertEquals("1", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getId());
+        assertEquals(DATE, Objects.requireNonNull(response.getBody().getResult()).getDate());
     }
 
     @Test
     void postCompleteSeanceWithMissingFieldShouldReturnBadRequest() {
         SeanceRequest seanceRequest = new SeanceRequest("1", null, new ArrayList<>());
-        ResponseEntity<Seance> response = userController.postCompleteSeance(seanceRequest);
+        ResponseEntity<BaseResponse<Seance>> response = userController.postCompleteSeance(seanceRequest);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("All arg are not fill", Objects.requireNonNull(response.getBody()).getErrorMessage());
     }
 
     @Test
@@ -160,11 +163,12 @@ class UserControllerTest {
         seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("1", 1, 1d));
         seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("2", 2, 2d));
 
-        Mockito.when(seanceService.postCompleteSeance(seanceRequest)).thenReturn(null);
+        Mockito.when(seanceService.postCompleteSeance(seanceRequest)).thenReturn(BaseResponse.error("Gym id not exist in database or customer not register in this gym : " + seanceRequest.getGymId()));
 
-        ResponseEntity<Seance> response = userController.postCompleteSeance(seanceRequest);
+        ResponseEntity<BaseResponse<Seance>> response = userController.postCompleteSeance(seanceRequest);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Gym id not exist in database or customer not register in this gym : XXX", Objects.requireNonNull(response.getBody()).getErrorMessage());
     }
 
     @Test
@@ -174,18 +178,20 @@ class UserControllerTest {
 
         Mockito.when(seanceService.getSeanceById(seanceId)).thenReturn(seance);
 
-        ResponseEntity<Seance> response = userController.getSeanceById(seanceId);
+        ResponseEntity<BaseResponse<Seance>> response = userController.getSeanceById(seanceId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
-        assertEquals(DATE, Objects.requireNonNull(response.getBody()).getDate());
+        assertEquals("1", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getId());
+        assertEquals(DATE, Objects.requireNonNull(response.getBody().getResult()).getDate());
     }
 
     @Test
     void getSeanceByIdWithMissingIdShouldReturnBadRequest() {
-        ResponseEntity<Seance> response = userController.getSeanceById(null);
+        ResponseEntity<BaseResponse<Seance>> response = userController.getSeanceById(null);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("SeanceId is empty or null", Objects.requireNonNull(response.getBody()).getErrorMessage());
     }
 
     @Test
@@ -193,8 +199,9 @@ class UserControllerTest {
         String seanceId = "1";
         Mockito.when(seanceService.getSeanceById(seanceId)).thenReturn(null);
 
-        ResponseEntity<Seance> response = userController.getSeanceById(seanceId);
+        ResponseEntity<BaseResponse<Seance>> response = userController.getSeanceById(seanceId);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Seance not exist or not for this customer", Objects.requireNonNull(response.getBody()).getErrorMessage());
     }
 }

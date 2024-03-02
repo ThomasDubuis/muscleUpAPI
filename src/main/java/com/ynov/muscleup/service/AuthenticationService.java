@@ -1,6 +1,7 @@
 package com.ynov.muscleup.service;
 
 import com.ynov.muscleup.config.JwtService;
+import com.ynov.muscleup.model.BaseResponse;
 import com.ynov.muscleup.model.Customer;
 import com.ynov.muscleup.model.auth.*;
 import com.ynov.muscleup.model.customer_args.Role;
@@ -27,13 +28,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public ResponseEntity<AuthenticationResponse> register(RegisterRequest request) {
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+    public ResponseEntity<BaseResponse<AuthenticationResponse>> register(RegisterRequest request) {
         Optional<Customer> customer = customerRepository.findByEmail(request.getEmail());
         if (customer.isPresent()) {
             logger.warn("Email already used: {}", request.getEmail());
-            authenticationResponse.setMessage("Email already used: " + request.getEmail());
-            return ResponseEntity.badRequest().body(authenticationResponse);
+            return BaseResponse.error("Email already used: " + request.getEmail());
         }
 
         var user = Customer.builder()
@@ -47,7 +46,7 @@ public class AuthenticationService {
         customerRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
 
-        return ResponseEntity.ok(AuthenticationResponse.builder().token(jwtToken).build());
+        return BaseResponse.ok(AuthenticationResponse.builder().token(jwtToken).build());
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

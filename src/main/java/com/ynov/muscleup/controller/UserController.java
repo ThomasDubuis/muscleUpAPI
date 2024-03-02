@@ -2,6 +2,7 @@ package com.ynov.muscleup.controller;
 
 import com.ynov.muscleup.model.*;
 import com.ynov.muscleup.model.seance.SeanceRequest;
+import com.ynov.muscleup.model.BaseResponse;
 import com.ynov.muscleup.model.utils.IdRequest;
 import com.ynov.muscleup.service.*;
 import org.apache.logging.log4j.LogManager;
@@ -35,71 +36,68 @@ public class UserController {
 
 
     @GetMapping("/hello")
-    public ResponseEntity<String> sayHello() {
+    public ResponseEntity<BaseResponse<String>> sayHello() {
 
         logger.info(customerService.getCurrentCustomer());
-        return  ResponseEntity.ok("Hello from secured endpoint");
+        return BaseResponse.ok("Hello from secured endpoint");
     }
 
     @GetMapping("/getMe")
-    public ResponseEntity<Customer> getMe() {
-        return ResponseEntity.ok(customerService.getCurrentCustomer());
+    public ResponseEntity<BaseResponse<Customer>> getMe() {
+        return BaseResponse.ok(customerService.getCurrentCustomer());
     }
 
     @GetMapping("/getCategories")
-    public ResponseEntity<List<Category>> getCategories() {
-        return ResponseEntity.ok(categoryService.getCategories());
+    public ResponseEntity<BaseResponse<List<Category>>> getCategories() {
+        return BaseResponse.ok(categoryService.getCategories());
     }
 
     @GetMapping("/getGyms")
-    public ResponseEntity<List<Gym>> getGyms() {
-        return ResponseEntity.ok(gymService.getGyms());
+    public ResponseEntity<BaseResponse<List<Gym>>> getGyms() {
+        return BaseResponse.ok(gymService.getGyms());
     }
 
     @GetMapping("/getExercises")
-    public ResponseEntity<List<Exercise>> getExercises() {
-        return ResponseEntity.ok(exerciseService.getExercises());
+    public ResponseEntity<BaseResponse<List<Exercise>>> getExercises() {
+        return BaseResponse.ok(exerciseService.getExercises());
     }
 
     @PostMapping("/signUpToGym")
-    public ResponseEntity<InscriptionGym> signUpToGym(@RequestBody IdRequest gymId) {
+    public ResponseEntity<BaseResponse<InscriptionGym>> signUpToGym(@RequestBody IdRequest gymId) {
         if (gymId == null || gymId.getId() == null || gymId.getId().isBlank()) {
             logger.error("GymId is empty or null");
-            return ResponseEntity.badRequest().build();
+            return BaseResponse.error("GymId is empty or null");
         }
         InscriptionGym inscriptionGym = gymService.signUpToGym(gymId);
         if (inscriptionGym == null) {
-            return ResponseEntity.badRequest().build();
+            return BaseResponse.error("Id does not exist in Gym");
         }
-        return ResponseEntity.ok(inscriptionGym);
+        return BaseResponse.ok(inscriptionGym);
     }
 
 
     @PostMapping("/completeSeance")
-    public ResponseEntity<Seance> postCompleteSeance(@RequestBody SeanceRequest seanceRequest) {
+    public ResponseEntity<BaseResponse<Seance>> postCompleteSeance(@RequestBody SeanceRequest seanceRequest) {
         if (!seanceRequest.isAllArgsFill()) {
             logger.error("All arg are not fill");
-            return ResponseEntity.badRequest().build();
+            return BaseResponse.error("All arg are not fill");
         }
 
-        Seance seance = seanceService.postCompleteSeance(seanceRequest);
-        if (seance == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(seance);
+
+        return seanceService.postCompleteSeance(seanceRequest);
     }
 
     @GetMapping("/getSeance/{seanceId}")
-    public ResponseEntity<Seance> getSeanceById(@PathVariable String seanceId) {
+    public ResponseEntity<BaseResponse<Seance>> getSeanceById(@PathVariable String seanceId) {
         if (seanceId == null || seanceId.isBlank()) {
-            logger.error("seanceId is empty or null");
-            return ResponseEntity.badRequest().build();
+            logger.error("SeanceId is empty or null");
+            return BaseResponse.error("SeanceId is empty or null");
         }
         Seance seance = seanceService.getSeanceById(seanceId);
         if (seance == null) {
             logger.error("Seance not exist or not for this customer");
-            return ResponseEntity.badRequest().build();
+            return BaseResponse.error("Seance not exist or not for this customer");
         }
-        return ResponseEntity.ok(seance);
+        return BaseResponse.ok(seance);
     }
 }

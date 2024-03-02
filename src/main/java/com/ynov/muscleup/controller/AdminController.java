@@ -1,5 +1,6 @@
 package com.ynov.muscleup.controller;
 
+import com.ynov.muscleup.model.BaseResponse;
 import com.ynov.muscleup.model.Category;
 import com.ynov.muscleup.model.Exercise;
 import com.ynov.muscleup.model.Gym;
@@ -28,73 +29,73 @@ public class AdminController {
     GymService gymService;
 
     @GetMapping("/helloadmin")
-    public ResponseEntity<String> sayHelloOnlyAdmin() {
-        return  ResponseEntity.ok("Hello from secured ADMIN endpoint");
+    public ResponseEntity<BaseResponse<String>> sayHelloOnlyAdmin() {
+        return  BaseResponse.ok("Hello from secured ADMIN endpoint");
     }
 
     @PostMapping("/addCategory")
-    public ResponseEntity<Category> addCategory(@RequestBody Category request) {
-        return  ResponseEntity.ok(categoryService.addCategory(request));
+    public ResponseEntity<BaseResponse<Category>> addCategory(@RequestBody Category request) {
+        return  BaseResponse.ok(categoryService.addCategory(request));
     }
 
     @DeleteMapping("/deleteCategory")
-    public ResponseEntity<Category> deleteCategory(@RequestBody IdRequest id) {
+    public ResponseEntity<BaseResponse<Category>> deleteCategory(@RequestBody IdRequest id) {
         Category category = categoryService.deleteCategory(id);
-        return category == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(category);
+        return category == null ? BaseResponse.error("Id does not exist in Category") : BaseResponse.ok(category);
     }
 
     @PutMapping ("/updateCategory")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category request) {
+    public ResponseEntity<BaseResponse<Category>> updateCategory(@RequestBody Category request) {
         if (request.getId() == null || request.getId().isEmpty()) {
             logger.error(ID_NOT_PROVIDED);
-            return ResponseEntity.badRequest().build();
+            return BaseResponse.error(ID_NOT_PROVIDED);
         }
         Category category = categoryService.updateCategory(request);
-        return category == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(category);
+        return category == null ? BaseResponse.error("Id does not exist in Category") : BaseResponse.ok(category);
     }
 
 
 
     @PostMapping("/addExercise")
-    public ResponseEntity<Exercise> addExercise(@RequestBody Exercise request) {
-        return  ResponseEntity.ok(exerciseService.addExercise(request));
+    public ResponseEntity<BaseResponse<Exercise>> addExercise(@RequestBody Exercise request) {
+        return  BaseResponse.ok(exerciseService.addExercise(request));
     }
 
     @DeleteMapping("/deleteExercise")
-    public ResponseEntity<Exercise> deleteExercise(@RequestBody IdRequest id) {
+    public ResponseEntity<BaseResponse<Exercise>> deleteExercise(@RequestBody IdRequest id) {
         Exercise exercise = exerciseService.deleteExercise(id);
-        return exercise == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(exercise);
+        return exercise == null ? BaseResponse.error("Id does not exist in Exercise") : BaseResponse.ok(exercise);
     }
 
     @PutMapping ("/updateExercise")
-    public ResponseEntity<Exercise> updateExercise(@RequestBody Exercise request) {
+    public ResponseEntity<BaseResponse<Exercise>> updateExercise(@RequestBody Exercise request) {
         if (request.getId() == null || request.getId().isEmpty()) {
             logger.error(ID_NOT_PROVIDED);
-            return ResponseEntity.badRequest().build();
+            return BaseResponse.error(ID_NOT_PROVIDED);
         }
         Exercise exercise = exerciseService.updateExercise(request);
-        return exercise == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(exercise);
+        return exercise == null ? BaseResponse.error("Id does not exist in Exercise") : BaseResponse.ok(exercise);
     }
 
 
     @PostMapping("/addGym")
-    public ResponseEntity<Gym> addGym(@RequestBody Gym request) {
-        return  ResponseEntity.ok(gymService.addGym(request));
+    public ResponseEntity<BaseResponse<Gym>> addGym(@RequestBody Gym request) {
+        return  BaseResponse.ok(gymService.addGym(request));
     }
 
     @DeleteMapping("/deleteGym")
-    public ResponseEntity<Gym> deleteGym(@RequestBody IdRequest id) {
+    public ResponseEntity<BaseResponse<Gym>> deleteGym(@RequestBody IdRequest id) {
         Gym gym = gymService.deleteGym(id);
-        return gym == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(gym);
+        return gym == null ? BaseResponse.error("Id does not exist in Gym") : BaseResponse.ok(gym);
     }
 
     @PutMapping ("/updateGym")
-    public ResponseEntity<Gym> updateGym(@RequestBody Gym request) {
+    public ResponseEntity<BaseResponse<Gym>> updateGym(@RequestBody Gym request) {
         if (request.getId() == null || request.getId().isEmpty()) {
             logger.error(ID_NOT_PROVIDED);
-            return ResponseEntity.badRequest().build();
+            return BaseResponse.error(ID_NOT_PROVIDED);
         }
         Gym gym = gymService.updateGym(request);
-        return gym == null ? ResponseEntity.badRequest().build() : ResponseEntity.ok(gym);
+        return gym == null ? BaseResponse.error("Id does not exist in Gym"): BaseResponse.ok(gym);
     }
 }

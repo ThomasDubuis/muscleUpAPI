@@ -1,5 +1,6 @@
 package com.ynov.muscleup.controller;
 
+import com.ynov.muscleup.model.BaseResponse;
 import com.ynov.muscleup.model.Category;
 import com.ynov.muscleup.model.Exercise;
 import com.ynov.muscleup.model.Gym;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(SpringExtension.class)
 class AdminControllerTest {
@@ -37,12 +39,12 @@ class AdminControllerTest {
         Category category = new Category(null, "category", "descCategory");
         Mockito.when(categoryService.addCategory(category)).thenReturn(new Category("1", "category", "descCategory"));
 
-        ResponseEntity<Category> response = adminController.addCategory(category);
+        ResponseEntity<BaseResponse<Category>> response = adminController.addCategory(category);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("category", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("descCategory", Objects.requireNonNull(response.getBody()).getDescription());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("category", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("descCategory", Objects.requireNonNull(response.getBody().getResult()).getDescription());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
@@ -50,12 +52,12 @@ class AdminControllerTest {
         IdRequest request = new IdRequest("1");
         Mockito.when(categoryService.deleteCategory(request)).thenReturn(new Category("1", "category", "descCategory"));
 
-        ResponseEntity<Category> response = adminController.deleteCategory(request);
+        ResponseEntity<BaseResponse<Category>> response = adminController.deleteCategory(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("category", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("descCategory", Objects.requireNonNull(response.getBody()).getDescription());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("category", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("descCategory", Objects.requireNonNull(response.getBody().getResult()).getDescription());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
@@ -63,9 +65,10 @@ class AdminControllerTest {
         IdRequest request = new IdRequest("1");
         Mockito.when(categoryService.deleteCategory(request)).thenReturn(null); //Return null if id not exist in DB
 
-        ResponseEntity<Category> response = adminController.deleteCategory(request);
+        ResponseEntity<BaseResponse<Category>> response = adminController.deleteCategory(request);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id does not exist in Category", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -73,21 +76,22 @@ class AdminControllerTest {
         Category category = new Category("1", "category", "descCategory");
         Mockito.when(categoryService.updateCategory(category)).thenReturn(new Category("1", "category", "descCategory"));
 
-        ResponseEntity<Category> response = adminController.updateCategory(category);
+        ResponseEntity<BaseResponse<Category>> response = adminController.updateCategory(category);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("category", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("descCategory", Objects.requireNonNull(response.getBody()).getDescription());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("category", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("descCategory", Objects.requireNonNull(response.getBody().getResult()).getDescription());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
     void updateCategoryWithNotIdShouldReturnBadRequest() {
         Category category = new Category(null, "category", "descCategory");
 
-        ResponseEntity<Category> response = adminController.updateCategory(category);
+        ResponseEntity<BaseResponse<Category>> response = adminController.updateCategory(category);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id not provided", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -95,9 +99,10 @@ class AdminControllerTest {
         Category category = new Category("1", "category", "descCategory");
         Mockito.when(categoryService.updateCategory(category)).thenReturn(null); //Return null if id not exist in DB
 
-        ResponseEntity<Category> response = adminController.updateCategory(category);
+        ResponseEntity<BaseResponse<Category>> response = adminController.updateCategory(category);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id does not exist in Category", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -105,15 +110,15 @@ class AdminControllerTest {
         Exercise exercise = new Exercise(null, "Exercise", 1d, 1d, 1d, "descExercise");
         Mockito.when(exerciseService.addExercise(exercise)).thenReturn(new Exercise("1", "Exercise", 1d, 1d, 1d, "descExercise"));
 
-        ResponseEntity<Exercise> response = adminController.addExercise(exercise);
+        ResponseEntity<BaseResponse<Exercise>> response = adminController.addExercise(exercise);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Exercise", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("descExercise", Objects.requireNonNull(response.getBody()).getDescription());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getOneRepScore());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getBasicWeight());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getWeightMultiplier());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("Exercise", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("descExercise", Objects.requireNonNull(response.getBody().getResult()).getDescription());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getOneRepScore());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getBasicWeight());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getWeightMultiplier());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
@@ -121,15 +126,15 @@ class AdminControllerTest {
         IdRequest request = new IdRequest("1");
         Mockito.when(exerciseService.deleteExercise(request)).thenReturn(new Exercise("1", "Exercise", 1d, 1d, 1d, "descExercise"));
 
-        ResponseEntity<Exercise> response = adminController.deleteExercise(request);
+        ResponseEntity<BaseResponse<Exercise>> response = adminController.deleteExercise(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Exercise", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("descExercise", Objects.requireNonNull(response.getBody()).getDescription());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getOneRepScore());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getBasicWeight());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getWeightMultiplier());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("Exercise", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("descExercise", Objects.requireNonNull(response.getBody().getResult()).getDescription());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getOneRepScore());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getBasicWeight());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getWeightMultiplier());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
@@ -137,9 +142,10 @@ class AdminControllerTest {
         IdRequest request = new IdRequest("1");
         Mockito.when(exerciseService.deleteExercise(request)).thenReturn(null); //Return null if id not exist in DB
 
-        ResponseEntity<Exercise> response = adminController.deleteExercise(request);
+        ResponseEntity<BaseResponse<Exercise>> response = adminController.deleteExercise(request);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id does not exist in Exercise", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -147,24 +153,25 @@ class AdminControllerTest {
         Exercise exercise = new Exercise("1", "Exercise", 1d, 1d, 1d, "descExercise");
         Mockito.when(exerciseService.updateExercise(exercise)).thenReturn(new Exercise("1", "Exercise", 1d, 1d, 1d, "descExercise"));
 
-        ResponseEntity<Exercise> response = adminController.updateExercise(exercise);
+        ResponseEntity<BaseResponse<Exercise>> response = adminController.updateExercise(exercise);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Exercise", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("descExercise", Objects.requireNonNull(response.getBody()).getDescription());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getOneRepScore());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getBasicWeight());
-        assertEquals(1d, Objects.requireNonNull(response.getBody()).getWeightMultiplier());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("Exercise", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("descExercise", Objects.requireNonNull(response.getBody().getResult()).getDescription());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getOneRepScore());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getBasicWeight());
+        assertEquals(1d, Objects.requireNonNull(response.getBody().getResult()).getWeightMultiplier());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
     void updateExerciseWithNotIdShouldReturnBadRequest() {
         Exercise exercise = new Exercise(null, "Exercise", 1d, 1d, 1d, "descExercise");
 
-        ResponseEntity<Exercise> response = adminController.updateExercise(exercise);
+        ResponseEntity<BaseResponse<Exercise>> response = adminController.updateExercise(exercise);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id not provided", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -172,9 +179,10 @@ class AdminControllerTest {
         Exercise exercise = new Exercise("1", "Exercise", 1d, 1d, 1d, "descExercise");
         Mockito.when(exerciseService.updateExercise(exercise)).thenReturn(null); //Return null if id not exist in DB
 
-        ResponseEntity<Exercise> response = adminController.updateExercise(exercise);
+        ResponseEntity<BaseResponse<Exercise>> response = adminController.updateExercise(exercise);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id does not exist in Exercise", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -182,16 +190,16 @@ class AdminControllerTest {
         Gym gym = new Gym(null, "gym", "group", "city", "department", "region", "country");
         Mockito.when(gymService.addGym(gym)).thenReturn(new Gym("1", "gym", "group", "city", "department", "region", "country"));
 
-        ResponseEntity<Gym> response = adminController.addGym(gym);
+        ResponseEntity<BaseResponse<Gym>> response = adminController.addGym(gym);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("gym", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("group", Objects.requireNonNull(response.getBody()).getGroupName());
-        assertEquals("city", Objects.requireNonNull(response.getBody()).getCity());
-        assertEquals("department", Objects.requireNonNull(response.getBody()).getDepartment());
-        assertEquals("region", Objects.requireNonNull(response.getBody()).getRegion());
-        assertEquals("country", Objects.requireNonNull(response.getBody()).getCountry());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("gym", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("group", Objects.requireNonNull(response.getBody().getResult()).getGroupName());
+        assertEquals("city", Objects.requireNonNull(response.getBody().getResult()).getCity());
+        assertEquals("department", Objects.requireNonNull(response.getBody().getResult()).getDepartment());
+        assertEquals("region", Objects.requireNonNull(response.getBody().getResult()).getRegion());
+        assertEquals("country", Objects.requireNonNull(response.getBody().getResult()).getCountry());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
@@ -199,16 +207,16 @@ class AdminControllerTest {
         IdRequest request = new IdRequest("1");
         Mockito.when(gymService.deleteGym(request)).thenReturn(new Gym("1", "gym", "group", "city", "department", "region", "country"));
 
-        ResponseEntity<Gym> response = adminController.deleteGym(request);
+        ResponseEntity<BaseResponse<Gym>> response = adminController.deleteGym(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("gym", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("group", Objects.requireNonNull(response.getBody()).getGroupName());
-        assertEquals("city", Objects.requireNonNull(response.getBody()).getCity());
-        assertEquals("department", Objects.requireNonNull(response.getBody()).getDepartment());
-        assertEquals("region", Objects.requireNonNull(response.getBody()).getRegion());
-        assertEquals("country", Objects.requireNonNull(response.getBody()).getCountry());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("gym", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("group", Objects.requireNonNull(response.getBody().getResult()).getGroupName());
+        assertEquals("city", Objects.requireNonNull(response.getBody().getResult()).getCity());
+        assertEquals("department", Objects.requireNonNull(response.getBody().getResult()).getDepartment());
+        assertEquals("region", Objects.requireNonNull(response.getBody().getResult()).getRegion());
+        assertEquals("country", Objects.requireNonNull(response.getBody().getResult()).getCountry());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
@@ -216,9 +224,10 @@ class AdminControllerTest {
         IdRequest request = new IdRequest("1");
         Mockito.when(gymService.deleteGym(request)).thenReturn(null); //Return null if id not exist in DB
 
-        ResponseEntity<Gym> response = adminController.deleteGym(request);
+        ResponseEntity<BaseResponse<Gym>> response = adminController.deleteGym(request);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id does not exist in Gym", response.getBody().getErrorMessage());
     }
 
     @Test
@@ -226,34 +235,36 @@ class AdminControllerTest {
         Gym exercise = new Gym("1", "gym", "group", "city", "department", "region", "country");
         Mockito.when(gymService.updateGym(exercise)).thenReturn(new Gym("1", "gym", "group", "city", "department", "region", "country"));
 
-        ResponseEntity<Gym> response = adminController.updateGym(exercise);
+        ResponseEntity<BaseResponse<Gym>> response = adminController.updateGym(exercise);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("gym", Objects.requireNonNull(response.getBody()).getName());
-        assertEquals("group", Objects.requireNonNull(response.getBody()).getGroupName());
-        assertEquals("city", Objects.requireNonNull(response.getBody()).getCity());
-        assertEquals("department", Objects.requireNonNull(response.getBody()).getDepartment());
-        assertEquals("region", Objects.requireNonNull(response.getBody()).getRegion());
-        assertEquals("country", Objects.requireNonNull(response.getBody()).getCountry());
-        assertEquals("1", Objects.requireNonNull(response.getBody()).getId());
+        assertEquals("gym", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
+        assertEquals("group", Objects.requireNonNull(response.getBody().getResult()).getGroupName());
+        assertEquals("city", Objects.requireNonNull(response.getBody().getResult()).getCity());
+        assertEquals("department", Objects.requireNonNull(response.getBody().getResult()).getDepartment());
+        assertEquals("region", Objects.requireNonNull(response.getBody().getResult()).getRegion());
+        assertEquals("country", Objects.requireNonNull(response.getBody().getResult()).getCountry());
+        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
     }
 
     @Test
     void updateGymWithNotIdShouldReturnBadRequest() {
         Gym gym = new Gym(null, "gym", "group", "city", "department", "region", "country");
 
-        ResponseEntity<Gym> response = adminController.updateGym(gym);
+        ResponseEntity<BaseResponse<Gym>> response = adminController.updateGym(gym);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id not provided", response.getBody().getErrorMessage());
     }
 
     @Test
     void updateGymThatDoesNotExistShouldReturnBadRequest() {
-        Gym gym = new Gym(null, "gym", "group", "city", "department", "region", "country");
+        Gym gym = new Gym("1", "gym", "group", "city", "department", "region", "country");
         Mockito.when(gymService.updateGym(gym)).thenReturn(null); //Return null if id not exist in DB
 
-        ResponseEntity<Gym> response = adminController.updateGym(gym);
+        ResponseEntity<BaseResponse<Gym>> response = adminController.updateGym(gym);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
+        assertEquals("Id does not exist in Gym", response.getBody().getErrorMessage());
     }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,13 +35,13 @@ public class SeanceService {
     @Autowired
     ProgramSeanceRepository programSeanceRepository;
 
-    public Seance postCompleteSeance(SeanceRequest seanceRequest) {
+    public ResponseEntity<BaseResponse<Seance>> postCompleteSeance(SeanceRequest seanceRequest) {
         Customer customer = customerService.getCurrentCustomer();
 
         Gym gym = gymService.getGymIfCustomerIsRegistered(customer, seanceRequest.getGymId());
         if (gym == null) {
             logger.error("Gym id not exist in database or customer not register in this gym : {}", seanceRequest.getGymId());
-            return null;
+            return BaseResponse.error("Gym id not exist in database or customer not register in this gym : " + seanceRequest.getGymId());
         }
 
         List<ProgramSeance> programSeances = new ArrayList<>();
@@ -56,7 +57,7 @@ public class SeanceService {
                 programSeances.add(programSeance);
             }else {
                 logger.error("Exercise Id not exist in database : {}", programSeanceRequest.getExerciseId());
-                return null;
+                return BaseResponse.error("Exercise Id not exist in database : " + programSeanceRequest.getExerciseId());
             }
         }
 
@@ -78,7 +79,7 @@ public class SeanceService {
         //TODO : Calculate new rank (créer une methode calculate new rank dans rankService qui permet de mettre a jour tous les ranks)
         // et faire les TU avec
 
-        return seanceRegistered;
+        return BaseResponse.ok(seanceRegistered);
         //TODO : Voir pk lors du FindById dans cette methode ne get pas les program seance
         // alors que lorsque l'endpoint est appelé il les get bien
     }

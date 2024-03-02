@@ -1,5 +1,6 @@
 package com.ynov.muscleup.controller;
 
+import com.ynov.muscleup.model.BaseResponse;
 import com.ynov.muscleup.model.auth.*;
 import com.ynov.muscleup.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -23,42 +24,37 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+    public ResponseEntity<BaseResponse<AuthenticationResponse>> register(@RequestBody RegisterRequest request) {
         if (!request.isAllArgsFill() ) {
             logger.error(ALL_ARG_NOT_PROVIDED);
-            authenticationResponse.setMessage(ALL_ARG_NOT_PROVIDED);
-            return ResponseEntity.badRequest().body(authenticationResponse);
+            return BaseResponse.error(ALL_ARG_NOT_PROVIDED);
         } else if (!request.isSamePassword()) {
             logger.error(PASSWORD_NOT_SAME);
-            authenticationResponse.setMessage(PASSWORD_NOT_SAME);
-            return ResponseEntity.badRequest().body(authenticationResponse);
+            return BaseResponse.error(PASSWORD_NOT_SAME);
         }
         return authenticationService.register(request);
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+    public ResponseEntity<BaseResponse<AuthenticationResponse>> authenticate(@RequestBody AuthenticationRequest request) {
         if (!request.isAllArgsFill()){
             logger.error(ALL_ARG_NOT_PROVIDED);
-            authenticationResponse.setMessage(ALL_ARG_NOT_PROVIDED);
-            return ResponseEntity.badRequest().body(authenticationResponse);
+            return BaseResponse.error(ALL_ARG_NOT_PROVIDED);
         }
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return BaseResponse.ok(authenticationService.authenticate(request));
     }
 
     @PostMapping("/changepwd")
-    public ResponseEntity<PasswordChangeResponse> changePassword(@RequestBody PasswordChangeRequest request) {
+    public ResponseEntity<BaseResponse<PasswordChangeResponse>> changePassword(@RequestBody PasswordChangeRequest request) {
         if (!request.isAllArgsFill()){
             logger.error(ALL_ARG_NOT_PROVIDED);
-            return ResponseEntity.badRequest().body(PasswordChangeResponse.builder().passwordChanged(false).errorMessage(ALL_ARG_NOT_PROVIDED).build());
+            return BaseResponse.error(ALL_ARG_NOT_PROVIDED);
         }
         if (!request.checkOldPasswordAreSame() || !request.checkNewPasswordAreSame()) {
             logger.error(PASSWORD_NOT_SAME);
-            return ResponseEntity.badRequest().body(PasswordChangeResponse.builder().passwordChanged(false).errorMessage(PASSWORD_NOT_SAME).build());
+            return BaseResponse.error(PASSWORD_NOT_SAME);
         }
-        return ResponseEntity.ok(authenticationService.changePassword(request));
+        return BaseResponse.ok(authenticationService.changePassword(request));
     }
 
 }
