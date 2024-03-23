@@ -38,9 +38,11 @@ class GymServiceTest {
     CustomerService customerService;
 
     private final Gym GYM = new Gym("1", "gymName", "gymGroupName", "gymCity", "gymDepartment", "gymRegion", "gymCountry");
+    private final Gym GYM2 = new Gym("2", "gymName2", "gymGroupName2", "gymCity2", "gymDepartment2", "gymRegion2", "gymCountry2");
     private final Customer USER = new Customer("1", "Joe", "LeJoe", "JoeLeJoe@gmail.com", "passwordHashed", Role.USER, Visibility.ALL);
     private final Date DATE = new GregorianCalendar(2014, Calendar.JANUARY, 11).getTime();
     private final InscriptionGym INSCRIPTIONGYM = new InscriptionGym("1", USER, GYM, DATE);
+    private final InscriptionGym INSCRIPTIONGYM2 = new InscriptionGym("2", USER, GYM2, DATE);
 
     @Test
     void addGymButGymAlreadyExist(CapturedOutput output) {
@@ -109,7 +111,7 @@ class GymServiceTest {
     }
 
     @Test
-    void getCategoriesShouldReturnAllCategories() {
+    void getGymsShouldReturnAllGyms() {
         when(gymRepository.findAll()).thenReturn(Collections.singletonList(GYM));
 
         List<Gym> response = gymService.getGyms();
@@ -151,5 +153,16 @@ class GymServiceTest {
         Gym result = gymService.getGymIfCustomerIsRegistered(USER, "1");
 
         assertEquals(GYM, result);
+    }
+
+    @Test
+    void getMyGymsShouldReturnListGymSubscribe() {
+        when(customerService.getCurrentCustomer()).thenReturn(USER);
+        when(inscriptionGymRepository.findInscriptionGymsByCustomer(USER)).thenReturn(List.of(INSCRIPTIONGYM, INSCRIPTIONGYM2));
+
+        List<Gym> result = gymService.getMyGyms();
+
+        assertEquals(GYM, result.get(0));
+        assertEquals(GYM2, result.get(1));
     }
 }

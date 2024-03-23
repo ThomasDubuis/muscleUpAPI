@@ -84,6 +84,21 @@ class UserControllerTest {
         assertEquals(2, Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).size());
     }
 
+
+    @Test
+    void getMyGymsShouldReturnListOfSubscribedGyms() {
+        List<Gym> gymList = new ArrayList<>();
+        gymList.add(new Gym("1", null, null, null, null, null, null));
+        gymList.add(new Gym("2", null, null, null, null, null, null));
+
+        Mockito.when(gymService.getMyGyms()).thenReturn(gymList);
+
+        ResponseEntity<BaseResponse<List<Gym>>> response = userController.getMyGyms();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).size());
+    }
+
     @Test
     void getExercisesShouldReturnExercises() {
         List<Exercise> exerciseList = new ArrayList<>();

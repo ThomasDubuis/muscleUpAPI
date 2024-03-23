@@ -52,6 +52,11 @@ public class UserController {
         return BaseResponse.ok(categoryService.getCategories());
     }
 
+    @GetMapping("/getMyGyms")
+    public ResponseEntity<BaseResponse<List<Gym>>> getMyGyms() {
+        return BaseResponse.ok(gymService.getMyGyms());
+    }
+
     @GetMapping("/getGyms")
     public ResponseEntity<BaseResponse<List<Gym>>> getGyms() {
         return BaseResponse.ok(gymService.getGyms());

@@ -71,6 +71,11 @@ public class GymService {
         return gymRepository.findAll();
     }
 
+    public List<Gym> getMyGyms() {
+        Customer customer = customerService.getCurrentCustomer();
+        List<InscriptionGym> inscriptionGyms = inscriptionGymRepository.findInscriptionGymsByCustomer(customer);
+        return inscriptionGyms.stream().map(InscriptionGym::getGym).toList();
+    }
 
     public InscriptionGym signUpToGym(IdRequest gymId) {
         Date date = new Date();
@@ -100,4 +105,5 @@ public class GymService {
         }
         return gym;
     }
+
 }
