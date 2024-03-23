@@ -71,9 +71,9 @@ class AuthenticationServiceTest {
         when(customerRepository.findByEmail("JoeLeJoe@gmail.com")).thenReturn(Optional.of(USER));
         when(jwtService.generateToken(any())).thenReturn(TOKEN);
 
-        AuthenticationResponse response = authenticationService.authenticate(request);
+        ResponseEntity<BaseResponse<AuthenticationResponse>> response = authenticationService.authenticate(request);
 
-        assertEquals(TOKEN, response.getToken());
+        assertEquals(TOKEN, Objects.requireNonNull(response.getBody()).getResult().getToken());
     }
 
     @Test

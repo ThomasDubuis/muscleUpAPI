@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,12 +50,17 @@ public class AuthenticationService {
         return BaseResponse.ok(AuthenticationResponse.builder().token(jwtToken).build());
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    public ResponseEntity<BaseResponse<AuthenticationResponse>> authenticate(AuthenticationRequest request) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (AuthenticationException e) {
+            logger.warn("Password and Email not match for email : {}", request.getEmail());
+            return BaseResponse.error("Password and Email not match");
+        }
         var user = customerRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return BaseResponse.ok(AuthenticationResponse.builder().token(jwtToken).build());
     }
 
     public PasswordChangeResponse changePassword(PasswordChangeRequest request) {

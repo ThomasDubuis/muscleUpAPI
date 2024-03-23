@@ -70,7 +70,7 @@ class AuthenticationControllerTest {
     @Test
     void authenticateShouldReturnResponse200AndValidToken() {
         AuthenticationRequest request = new AuthenticationRequest("JoeLeJoe@gmail.com", "pwd");
-        Mockito.when(authenticationService.authenticate(request)).thenReturn(new AuthenticationResponse("", "tokenValid"));
+        Mockito.when(authenticationService.authenticate(request)).thenReturn(BaseResponse.ok(new AuthenticationResponse("", "tokenValid")));
 
         ResponseEntity<BaseResponse<AuthenticationResponse>> response = authenticationController.authenticate(request);
 

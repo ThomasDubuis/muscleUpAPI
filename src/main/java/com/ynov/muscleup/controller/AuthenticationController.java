@@ -41,7 +41,7 @@ public class AuthenticationController {
             logger.error(ALL_ARG_NOT_PROVIDED);
             return BaseResponse.error(ALL_ARG_NOT_PROVIDED);
         }
-        return BaseResponse.ok(authenticationService.authenticate(request));
+        return authenticationService.authenticate(request);
     }
 
     @PostMapping("/changepwd")
