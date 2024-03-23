@@ -147,26 +147,30 @@ class UserControllerTest {
     }
 
     @Test
-    void postCompleteSeanceShouldReturnSeance() {
+    void postCompleteSeanceShouldReturnSeanceId() {
         SeanceRequest seanceRequest = new SeanceRequest("1", DATE, new ArrayList<>());
-        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("1", 1, 1d));
-        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("2", 2, 2d));
+        List<SeanceRequest.SeriesRequest> seriesRequests1 = new ArrayList<>();
+        seriesRequests1.add(new SeanceRequest.SeriesRequest(1,1d));
+        seriesRequests1.add(new SeanceRequest.SeriesRequest(2,2d));
+        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("1",seriesRequests1));
+        List<SeanceRequest.SeriesRequest> seriesRequests2 = new ArrayList<>();
+        seriesRequests2.add(new SeanceRequest.SeriesRequest(3,3d));
+        seriesRequests2.add(new SeanceRequest.SeriesRequest(4,4d));
+        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("2", seriesRequests2));
 
-        Seance seance = new Seance("1", DATE, new Customer(), new Gym(), 1d, new ArrayList<>());
+        IdRequest idRequest = new IdRequest("123");
+        Mockito.when(seanceService.postCompleteSeance(seanceRequest)).thenReturn(BaseResponse.ok(idRequest));
 
-        Mockito.when(seanceService.postCompleteSeance(seanceRequest)).thenReturn(BaseResponse.ok(seance));
-
-        ResponseEntity<BaseResponse<Seance>> response = userController.postCompleteSeance(seanceRequest);
+        ResponseEntity<BaseResponse<IdRequest>> response = userController.postCompleteSeance(seanceRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("1", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getId());
-        assertEquals(DATE, Objects.requireNonNull(response.getBody().getResult()).getDate());
+        assertEquals("123", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getId());
     }
 
     @Test
     void postCompleteSeanceWithMissingFieldShouldReturnBadRequest() {
         SeanceRequest seanceRequest = new SeanceRequest("1", null, new ArrayList<>());
-        ResponseEntity<BaseResponse<Seance>> response = userController.postCompleteSeance(seanceRequest);
+        ResponseEntity<BaseResponse<IdRequest>> response = userController.postCompleteSeance(seanceRequest);
 
         assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
         assertEquals("All arg are not fill", Objects.requireNonNull(response.getBody()).getErrorMessage());
@@ -175,12 +179,18 @@ class UserControllerTest {
     @Test
     void postCompleteSeanceWithGymIdDoesNotExistShouldReturnBadRequest() {
         SeanceRequest seanceRequest = new SeanceRequest("XXX", DATE, new ArrayList<>());
-        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("1", 1, 1d));
-        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("2", 2, 2d));
+        List<SeanceRequest.SeriesRequest> seriesRequests1 = new ArrayList<>();
+        seriesRequests1.add(new SeanceRequest.SeriesRequest(1,1d));
+        seriesRequests1.add(new SeanceRequest.SeriesRequest(2,2d));
+        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("1",seriesRequests1));
+        List<SeanceRequest.SeriesRequest> seriesRequests2 = new ArrayList<>();
+        seriesRequests2.add(new SeanceRequest.SeriesRequest(3,3d));
+        seriesRequests2.add(new SeanceRequest.SeriesRequest(4,4d));
+        seanceRequest.getProgramSeances().add(new SeanceRequest.ProgramSeanceRequest("2", seriesRequests2));
 
         Mockito.when(seanceService.postCompleteSeance(seanceRequest)).thenReturn(BaseResponse.error("Gym id not exist in database or customer not register in this gym : " + seanceRequest.getGymId()));
 
-        ResponseEntity<BaseResponse<Seance>> response = userController.postCompleteSeance(seanceRequest);
+        ResponseEntity<BaseResponse<IdRequest>> response = userController.postCompleteSeance(seanceRequest);
 
         assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
         assertEquals("Gym id not exist in database or customer not register in this gym : XXX", Objects.requireNonNull(response.getBody()).getErrorMessage());

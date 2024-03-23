@@ -2,8 +2,10 @@ package com.ynov.muscleup.service;
 
 import com.ynov.muscleup.model.*;
 import com.ynov.muscleup.model.seance.SeanceRequest;
+import com.ynov.muscleup.model.utils.IdRequest;
 import com.ynov.muscleup.repository.ProgramSeanceRepository;
 import com.ynov.muscleup.repository.SeanceRepository;
+import com.ynov.muscleup.repository.SeriesRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +37,10 @@ public class SeanceService {
     @Autowired
     ProgramSeanceRepository programSeanceRepository;
 
-    public ResponseEntity<BaseResponse<Seance>> postCompleteSeance(SeanceRequest seanceRequest) {
+    @Autowired
+    SeriesRepository seriesRepository;
+
+    public ResponseEntity<BaseResponse<IdRequest>> postCompleteSeance(SeanceRequest seanceRequest) {
         Customer customer = customerService.getCurrentCustomer();
 
         Gym gym = gymService.getGymIfCustomerIsRegistered(customer, seanceRequest.getGymId());
@@ -44,17 +49,25 @@ public class SeanceService {
             return BaseResponse.error("Gym id not exist in database or customer not register in this gym : " + seanceRequest.getGymId());
         }
 
-        List<ProgramSeance> programSeances = new ArrayList<>();
+        List<ProgramSeance> programSeanceList = new ArrayList<>();
 
         for (SeanceRequest.ProgramSeanceRequest programSeanceRequest : seanceRequest.getProgramSeances()) {
             if(exerciseService.checkIfExerciseExist(programSeanceRequest.getExerciseId())) {
-                ProgramSeance programSeance = ProgramSeance.builder()
-                        .exercise(Exercise.builder().id(programSeanceRequest.getExerciseId()).build())
-                        .numberOfRep(programSeanceRequest.getNumberOfRep())
-                        .weight(programSeanceRequest.getWeight())
-                        .build();
+                List<Series> seriesList = new ArrayList<>();
+                for (SeanceRequest.SeriesRequest seriesRequest : programSeanceRequest.getSeries()) {
+                    Series series= Series.builder()
+                            .numberOfRep(seriesRequest.getNumberOfRep())
+                            .weight(seriesRequest.getWeight())
+                            .build();
+                    seriesList.add(series);
+                }
 
-                programSeances.add(programSeance);
+
+                ProgramSeance programSeance = new ProgramSeance();
+                programSeance.setExercise(Exercise.builder().id(programSeanceRequest.getExerciseId()).build());
+                programSeance.setSeries(seriesList);
+
+                programSeanceList.add(programSeance);
             }else {
                 logger.error("Exercise Id not exist in database : {}", programSeanceRequest.getExerciseId());
                 return BaseResponse.error("Exercise Id not exist in database : " + programSeanceRequest.getExerciseId());
@@ -62,24 +75,27 @@ public class SeanceService {
         }
 
         Seance seance = Seance.builder()
-                .score(123d)
+                .score(123d)//Provisoire
                 .date(seanceRequest.getDate())
                 .customer(customer)
                 .gym(gym)
                 .build();
 
-
         Seance seanceRegistered = seanceRepository.save(seance);
 
-        for (ProgramSeance programSeance: programSeances) {
+        for (ProgramSeance programSeance: programSeanceList) {
             programSeance.setSeance(seanceRegistered);
+            ProgramSeance programSeanceRegistred = programSeanceRepository.save(programSeance);
+            for (Series series : programSeance.getSeries()){
+                series.setProgramSeance(programSeanceRegistred);
+                seriesRepository.save(series);
+            }
         }
-        programSeanceRepository.saveAll(programSeances);
 
         //TODO : Calculate new rank (créer une methode calculate new rank dans rankService qui permet de mettre a jour tous les ranks)
         // et faire les TU avec
 
-        return BaseResponse.ok(seanceRegistered);
+        return BaseResponse.ok(new IdRequest(seanceRegistered.getId()));
         //TODO : Voir pk lors du FindById dans cette methode ne get pas les program seance
         // alors que lorsque l'endpoint est appelé il les get bien
     }

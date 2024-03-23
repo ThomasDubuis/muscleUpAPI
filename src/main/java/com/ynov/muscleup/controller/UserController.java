@@ -82,7 +82,7 @@ public class UserController {
 
 
     @PostMapping("/completeSeance")
-    public ResponseEntity<BaseResponse<Seance>> postCompleteSeance(@RequestBody SeanceRequest seanceRequest) {
+    public ResponseEntity<BaseResponse<IdRequest>> postCompleteSeance(@RequestBody SeanceRequest seanceRequest) {
         if (!seanceRequest.isAllArgsFill()) {
             logger.error("All arg are not fill");
             return BaseResponse.error("All arg are not fill");

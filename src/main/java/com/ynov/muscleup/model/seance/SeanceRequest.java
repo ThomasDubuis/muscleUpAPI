@@ -24,6 +24,14 @@ public class SeanceRequest {
     @NoArgsConstructor
     public static class ProgramSeanceRequest {
         private String exerciseId;
+        List<SeriesRequest> series;
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SeriesRequest {
         private Integer numberOfRep;
         private Double weight;
     }
