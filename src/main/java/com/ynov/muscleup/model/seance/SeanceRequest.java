@@ -14,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 public class SeanceRequest {
     private String gymId;
-    private Date date;
+    private Date startDate;
+    private Date endDate;
     private List<ProgramSeanceRequest> programSeances;
 
 

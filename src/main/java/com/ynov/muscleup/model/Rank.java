@@ -1,12 +1,13 @@
 package com.ynov.muscleup.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ynov.muscleup.model.rank_args.Category;
+import com.ynov.muscleup.model.rank_args.Grade;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Builder
@@ -17,9 +18,10 @@ public class Rank {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    @ManyToOne @JoinColumn(name = "customerId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
-    private Customer customer;
-    @ManyToOne @JoinColumn(name = "categoryId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    @Enumerated(EnumType.STRING)
     private Category category;
-    private Double score;
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
+    private Double minScore;
 }

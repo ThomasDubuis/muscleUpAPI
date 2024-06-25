@@ -1,11 +1,9 @@
 package com.ynov.muscleup.controller;
 
 import com.ynov.muscleup.model.BaseResponse;
-import com.ynov.muscleup.model.Category;
 import com.ynov.muscleup.model.Exercise;
 import com.ynov.muscleup.model.Gym;
 import com.ynov.muscleup.model.utils.IdRequest;
-import com.ynov.muscleup.service.CategoryService;
 import com.ynov.muscleup.service.ExerciseService;
 import com.ynov.muscleup.service.GymService;
 import org.apache.logging.log4j.LogManager;
@@ -22,8 +20,6 @@ public class AdminController {
     private static final String ID_NOT_PROVIDED = "Id not provided";
 
     @Autowired
-    CategoryService categoryService;
-    @Autowired
     ExerciseService exerciseService;
     @Autowired
     GymService gymService;
@@ -32,29 +28,6 @@ public class AdminController {
     public ResponseEntity<BaseResponse<String>> sayHelloOnlyAdmin() {
         return  BaseResponse.ok("Hello from secured ADMIN endpoint");
     }
-
-    @PostMapping("/addCategory")
-    public ResponseEntity<BaseResponse<Category>> addCategory(@RequestBody Category request) {
-        return  BaseResponse.ok(categoryService.addCategory(request));
-    }
-
-    @DeleteMapping("/deleteCategory")
-    public ResponseEntity<BaseResponse<Category>> deleteCategory(@RequestBody IdRequest id) {
-        Category category = categoryService.deleteCategory(id);
-        return category == null ? BaseResponse.error("Id does not exist in Category") : BaseResponse.ok(category);
-    }
-
-    @PutMapping ("/updateCategory")
-    public ResponseEntity<BaseResponse<Category>> updateCategory(@RequestBody Category request) {
-        if (request.getId() == null || request.getId().isEmpty()) {
-            logger.error(ID_NOT_PROVIDED);
-            return BaseResponse.error(ID_NOT_PROVIDED);
-        }
-        Category category = categoryService.updateCategory(request);
-        return category == null ? BaseResponse.error("Id does not exist in Category") : BaseResponse.ok(category);
-    }
-
-
 
     @PostMapping("/addExercise")
     public ResponseEntity<BaseResponse<Exercise>> addExercise(@RequestBody Exercise request) {

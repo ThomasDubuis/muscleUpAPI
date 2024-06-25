@@ -63,4 +63,9 @@ public class ExerciseService {
         Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
         return exerciseOptional.isPresent();
     }
+
+    public Exercise getExerciseById(String exerciseId) {
+        Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
+        return exerciseOptional.orElse(null);
+    }
 }

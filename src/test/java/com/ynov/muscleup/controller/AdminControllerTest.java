@@ -1,11 +1,9 @@
 package com.ynov.muscleup.controller;
 
 import com.ynov.muscleup.model.BaseResponse;
-import com.ynov.muscleup.model.Category;
 import com.ynov.muscleup.model.Exercise;
 import com.ynov.muscleup.model.Gym;
 import com.ynov.muscleup.model.utils.IdRequest;
-import com.ynov.muscleup.service.CategoryService;
 import com.ynov.muscleup.service.ExerciseService;
 import com.ynov.muscleup.service.GymService;
 import org.junit.jupiter.api.Test;
@@ -26,84 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class AdminControllerTest {
     @InjectMocks
     AdminController adminController;
-
-    @Mock
-    CategoryService categoryService;
     @Mock
     ExerciseService exerciseService;
     @Mock
     GymService gymService;
-
-    @Test
-    void addCategoryShouldReturnCategory() {
-        Category category = new Category(null, "category", "descCategory");
-        Mockito.when(categoryService.addCategory(category)).thenReturn(new Category("1", "category", "descCategory"));
-
-        ResponseEntity<BaseResponse<Category>> response = adminController.addCategory(category);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("category", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
-        assertEquals("descCategory", Objects.requireNonNull(response.getBody().getResult()).getDescription());
-        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
-    }
-
-    @Test
-    void deleteCategoryShouldReturnCategory() {
-        IdRequest request = new IdRequest("1");
-        Mockito.when(categoryService.deleteCategory(request)).thenReturn(new Category("1", "category", "descCategory"));
-
-        ResponseEntity<BaseResponse<Category>> response = adminController.deleteCategory(request);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("category", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
-        assertEquals("descCategory", Objects.requireNonNull(response.getBody().getResult()).getDescription());
-        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
-    }
-
-    @Test
-    void deleteCategoryThatDoesNotExistShouldReturnBadRequest() {
-        IdRequest request = new IdRequest("1");
-        Mockito.when(categoryService.deleteCategory(request)).thenReturn(null); //Return null if id not exist in DB
-
-        ResponseEntity<BaseResponse<Category>> response = adminController.deleteCategory(request);
-
-        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
-        assertEquals("Id does not exist in Category", response.getBody().getErrorMessage());
-    }
-
-    @Test
-    void updateCategoryShouldReturnCategory() {
-        Category category = new Category("1", "category", "descCategory");
-        Mockito.when(categoryService.updateCategory(category)).thenReturn(new Category("1", "category", "descCategory"));
-
-        ResponseEntity<BaseResponse<Category>> response = adminController.updateCategory(category);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("category", Objects.requireNonNull(Objects.requireNonNull(response.getBody()).getResult()).getName());
-        assertEquals("descCategory", Objects.requireNonNull(response.getBody().getResult()).getDescription());
-        assertEquals("1", Objects.requireNonNull(response.getBody().getResult()).getId());
-    }
-
-    @Test
-    void updateCategoryWithNotIdShouldReturnBadRequest() {
-        Category category = new Category(null, "category", "descCategory");
-
-        ResponseEntity<BaseResponse<Category>> response = adminController.updateCategory(category);
-
-        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
-        assertEquals("Id not provided", response.getBody().getErrorMessage());
-    }
-
-    @Test
-    void updateCategoryThatDoesNotExistShouldReturnBadRequest() {
-        Category category = new Category("1", "category", "descCategory");
-        Mockito.when(categoryService.updateCategory(category)).thenReturn(null); //Return null if id not exist in DB
-
-        ResponseEntity<BaseResponse<Category>> response = adminController.updateCategory(category);
-
-        assertFalse(Objects.requireNonNull(response.getBody()).getSuccess());
-        assertEquals("Id does not exist in Category", response.getBody().getErrorMessage());
-    }
 
     @Test
     void addExerciseShouldReturnExercise() {

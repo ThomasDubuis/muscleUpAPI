@@ -21,8 +21,6 @@ public class UserController {
     @Autowired
     CustomerService customerService;
 
-    @Autowired
-    CategoryService categoryService;
 
     @Autowired
     GymService gymService;
@@ -33,11 +31,8 @@ public class UserController {
     @Autowired
     SeanceService seanceService;
 
-
-
     @GetMapping("/hello")
     public ResponseEntity<BaseResponse<String>> sayHello() {
-
         logger.info(customerService.getCurrentCustomer());
         return BaseResponse.ok("Hello from secured endpoint");
     }
@@ -47,9 +42,19 @@ public class UserController {
         return BaseResponse.ok(customerService.getCurrentCustomer());
     }
 
-    @GetMapping("/getCategories")
-    public ResponseEntity<BaseResponse<List<Category>>> getCategories() {
-        return BaseResponse.ok(categoryService.getCategories());
+    @GetMapping("/getStatistics")
+    public ResponseEntity<BaseResponse<StatisticsResponse>> getStatistics() {
+        return BaseResponse.ok(customerService.getStatistics());
+    }
+
+    @GetMapping("/getRank")
+    public ResponseEntity<BaseResponse<List<RankResponse>>> getRank() {
+        return BaseResponse.ok(customerService.getRank());
+    }
+
+    @PutMapping("/updateMe")
+    public ResponseEntity<BaseResponse<Customer>> updateCustomer(@RequestBody Customer customer) {
+        return BaseResponse.ok(customerService.updateCustomer(customer));
     }
 
     @GetMapping("/getMyGyms")
@@ -80,15 +85,12 @@ public class UserController {
         return BaseResponse.ok(inscriptionGym);
     }
 
-
     @PostMapping("/completeSeance")
     public ResponseEntity<BaseResponse<IdRequest>> postCompleteSeance(@RequestBody SeanceRequest seanceRequest) {
         if (!seanceRequest.isAllArgsFill()) {
             logger.error("All arg are not fill");
             return BaseResponse.error("All arg are not fill");
         }
-
-
         return seanceService.postCompleteSeance(seanceRequest);
     }
 
@@ -104,5 +106,13 @@ public class UserController {
             return BaseResponse.error("Seance not exist or not for this customer");
         }
         return BaseResponse.ok(seance);
+    }
+    @GetMapping("/getSeances")
+    public ResponseEntity<BaseResponse<List<Seance>>> getSeances() {
+        List<Seance> seanceList = seanceService.getAllSeanceByCustomer();
+        if (seanceList == null || seanceList.isEmpty()) {
+            return BaseResponse.error("No seances found");
+        }
+        return BaseResponse.ok(seanceList);
     }
 }

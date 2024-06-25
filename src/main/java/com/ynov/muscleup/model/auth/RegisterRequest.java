@@ -1,5 +1,6 @@
 package com.ynov.muscleup.model.auth;
 
+import com.ynov.muscleup.model.customer_args.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class RegisterRequest {
     private String email;
     private String password;
     private String confirmPassword;
+    private Gender gender;
 
 
     public boolean isAllArgsFill() {
@@ -27,6 +29,8 @@ public class RegisterRequest {
         }else if (password == null || password.isBlank()){
             return false;
         }else if (confirmPassword == null || confirmPassword.isBlank()){
+            return false;
+        }else if (gender == null){
             return false;
         }else {
             return true;

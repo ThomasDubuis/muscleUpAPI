@@ -7,14 +7,19 @@ logging:
     com.ynov: debug
     org.springframework.web.filter.CommonsRequestLoggingFilter: debug
 spring:
+  sql:
+    init:
+      mode: always #For generate data with data.sql file
   datasource:
     url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/muscleup}
     username: ${DATASOURCE_USERNAME:postgres}
     password: ${DATASOURCE_PASSWORD:password}
   jpa:
+    open-in-view: true
+    defer-datasource-initialization: true
     hibernate:
-#      ddl-auto: create-drop
-      ddl-auto: update
+      ddl-auto: create
+#      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

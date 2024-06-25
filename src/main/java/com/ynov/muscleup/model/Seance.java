@@ -23,12 +23,14 @@ public class Seance {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private Date date;
+    private Date startDate;
+    private Date endDate;
     @ManyToOne @JoinColumn(name = "customerId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
     private Customer customer;
     @ManyToOne @JoinColumn(name = "GymId", nullable = false) @OnDelete(action = OnDeleteAction.CASCADE)
     private Gym gym;
     private Double score;
+    private Double weight;
     @OneToMany(mappedBy = "seance", fetch = FetchType.LAZY)
     private List<ProgramSeance> programSeances;
 }

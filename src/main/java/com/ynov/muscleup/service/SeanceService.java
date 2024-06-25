@@ -51,8 +51,11 @@ public class SeanceService {
 
         List<ProgramSeance> programSeanceList = new ArrayList<>();
 
+        double weight = 0d;
+        double score = 0d;
         for (SeanceRequest.ProgramSeanceRequest programSeanceRequest : seanceRequest.getProgramSeances()) {
             if(exerciseService.checkIfExerciseExist(programSeanceRequest.getExerciseId())) {
+                Exercise exercise = exerciseService.getExerciseById(programSeanceRequest.getExerciseId());
                 List<Series> seriesList = new ArrayList<>();
                 for (SeanceRequest.SeriesRequest seriesRequest : programSeanceRequest.getSeries()) {
                     Series series= Series.builder()
@@ -60,6 +63,20 @@ public class SeanceService {
                             .weight(seriesRequest.getWeight())
                             .build();
                     seriesList.add(series);
+
+
+                    double diffWeight = seriesRequest.getWeight() - exercise.getBasicWeight();
+                    Double calculatedOneRepScore;
+
+                    if(diffWeight > 0) {
+                        calculatedOneRepScore = exercise.getOneRepScore() + (diffWeight * exercise.getWeightMultiplier());
+                    } else if(diffWeight < 0) {
+                        calculatedOneRepScore = exercise.getOneRepScore() - (Math.abs(diffWeight) * exercise.getWeightMultiplier());
+                    }else {
+                        calculatedOneRepScore = exercise.getOneRepScore();
+                    }
+                    score += seriesRequest.getNumberOfRep() * calculatedOneRepScore;
+                    weight += seriesRequest.getWeight();
                 }
 
 
@@ -75,10 +92,12 @@ public class SeanceService {
         }
 
         Seance seance = Seance.builder()
-                .score(123d)//Provisoire
-                .date(seanceRequest.getDate())
+                .score(score)
+                .startDate(seanceRequest.getStartDate())
+                .endDate(seanceRequest.getEndDate())
                 .customer(customer)
                 .gym(gym)
+                .weight(weight)
                 .build();
 
         Seance seanceRegistered = seanceRepository.save(seance);
@@ -91,9 +110,6 @@ public class SeanceService {
                 seriesRepository.save(series);
             }
         }
-
-        //TODO : Calculate new rank (créer une methode calculate new rank dans rankService qui permet de mettre a jour tous les ranks)
-        // et faire les TU avec
 
         return BaseResponse.ok(new IdRequest(seanceRegistered.getId()));
         //TODO : Voir pk lors du FindById dans cette methode ne get pas les program seance
@@ -112,5 +128,10 @@ public class SeanceService {
         }else {
             return null;
         }
+    }
+
+    public List<Seance> getAllSeanceByCustomer() {
+        Customer customer = customerService.getCurrentCustomer();
+        return seanceRepository.findAllByCustomer(customer);
     }
 }

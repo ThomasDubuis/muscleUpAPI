@@ -43,6 +43,7 @@ public class AuthenticationService {
                 .hashedPassword(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .visibility(Visibility.ALL)
+                .gender(request.getGender())
                 .build();
         customerRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
