@@ -6,12 +6,12 @@ insert into gym(id, name, group_name, city, department, region, country) values 
 insert into gym(id, name, group_name, city, department, region, country) values ('76a57aad-72c6-4ad1-8d60-386bcf881bf3','Vita Liberté', 'Vita Liberté','Meyreuil', 'Bouches-du-Rhône', 'PACA', 'France');
 
 insert into rank(id, category, grade, min_score) values ('4bf1a37e-7662-4f51-bb3d-2c379c559857', 'ASSIDUITY', 'IRON', 0);
-insert into rank(id, category, grade, min_score) values ('c4f76c12-7214-40af-be0a-8428b458ae52', 'ASSIDUITY', 'BRONZE', 50);
-insert into rank(id, category, grade, min_score) values ('06fa7acd-08b7-410c-83a9-b21f800a19b4', 'ASSIDUITY', 'SILVER', 100);
-insert into rank(id, category, grade, min_score) values ('0cb559e8-00ae-436e-928e-ab46308ff3f2', 'ASSIDUITY', 'OR', 150);
-insert into rank(id, category, grade, min_score) values ('a0940b0b-68ae-4fdc-9304-dc28ec0c78e3', 'ASSIDUITY', 'PLATINE', 300);
-insert into rank(id, category, grade, min_score) values ('ed44e1c2-3ade-421c-88c5-c0db3a804734', 'ASSIDUITY', 'DIAMOND', 500);
-insert into rank(id, category, grade, min_score) values ('c942b815-d76c-43c2-bd23-f3e7140f11bc', 'ASSIDUITY', 'MASTER', 1000);
+insert into rank(id, category, grade, min_score) values ('c4f76c12-7214-40af-be0a-8428b458ae52', 'ASSIDUITY', 'BRONZE', 10);
+insert into rank(id, category, grade, min_score) values ('06fa7acd-08b7-410c-83a9-b21f800a19b4', 'ASSIDUITY', 'SILVER', 30);
+insert into rank(id, category, grade, min_score) values ('0cb559e8-00ae-436e-928e-ab46308ff3f2', 'ASSIDUITY', 'OR', 50);
+insert into rank(id, category, grade, min_score) values ('a0940b0b-68ae-4fdc-9304-dc28ec0c78e3', 'ASSIDUITY', 'PLATINE', 75);
+insert into rank(id, category, grade, min_score) values ('ed44e1c2-3ade-421c-88c5-c0db3a804734', 'ASSIDUITY', 'DIAMOND', 125);
+insert into rank(id, category, grade, min_score) values ('c942b815-d76c-43c2-bd23-f3e7140f11bc', 'ASSIDUITY', 'MASTER', 250);
 insert into rank(id, category, grade, min_score) values ('4ed905d1-28e7-4bc9-941a-a66a5f4785cb', 'PERFORMANCE', 'IRON', 0);
 insert into rank(id, category, grade, min_score) values ('ab224bc1-4dec-4b46-8633-ad04a4906785', 'PERFORMANCE', 'BRONZE', 500);
 insert into rank(id, category, grade, min_score) values ('29f40aec-840b-4d9f-951c-c0a743b30d8e', 'PERFORMANCE', 'SILVER', 1000);
