@@ -37,6 +37,13 @@ public class CustomerService {
         List<Seance> seances = seanceRepository.findAllByCustomer(customer);
         StatisticsResponse statisticsResponse = new StatisticsResponse();
         statisticsResponse.setTotalSeance(seances.size());
+        if (seances.isEmpty()) {
+            statisticsResponse.setAverageSeanceTime(0L);//for second
+            statisticsResponse.setAverageSeanceWeight(0D);
+            statisticsResponse.setAverageSeriesRep(0D);
+            return statisticsResponse;
+        }
+
         long time = 0;
         Double seanceWeight = 0d;
         int seriesCount = 0;
@@ -51,11 +58,7 @@ public class CustomerService {
                 seriesCount += programSeance.getSeries().size();
             }
         }
-        if (seances.isEmpty()) {
-            statisticsResponse.setAverageSeanceTime(0L);//for second
-        }else {
-            statisticsResponse.setAverageSeanceTime(time/seances.size() / 1000);//for second
-        }
+        statisticsResponse.setAverageSeanceTime(time/seances.size() / 1000);//for second
         statisticsResponse.setAverageSeanceWeight(seanceWeight/seances.size());
         statisticsResponse.setAverageSeriesRep((double)numberOfRep/(double)seriesCount);
 

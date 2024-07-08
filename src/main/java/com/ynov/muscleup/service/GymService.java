@@ -91,7 +91,15 @@ public class GymService {
         inscriptionGym.setDate(date);
         inscriptionGym.setCustomer(customerService.getCurrentCustomer());
 
-        return inscriptionGymRepository.save(inscriptionGym);
+        List<InscriptionGym> inscriptionGymSubscribeList = inscriptionGymRepository.findInscriptionGymsByCustomer(inscriptionGym.getCustomer());
+
+        if (inscriptionGymSubscribeList.isEmpty() || inscriptionGymSubscribeList.stream().noneMatch(e -> e.getGym().getId().equals(inscriptionGym.getGym().getId()))) {
+            return inscriptionGymRepository.save(inscriptionGym);
+        }else {
+            logger.error("Customer already subscribed to gym");
+            return null;
+        }
+
     }
 
     public Gym getGymIfCustomerIsRegistered(Customer customer, String gymId) {

@@ -80,7 +80,7 @@ public class UserController {
         }
         InscriptionGym inscriptionGym = gymService.signUpToGym(gymId);
         if (inscriptionGym == null) {
-            return BaseResponse.error("Id does not exist in Gym");
+            return BaseResponse.error("Id does not exist in Gym or customer already subscribe to this gym");
         }
         return BaseResponse.ok(inscriptionGym);
     }
