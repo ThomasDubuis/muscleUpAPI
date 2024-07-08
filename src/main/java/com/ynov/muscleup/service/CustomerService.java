@@ -51,7 +51,11 @@ public class CustomerService {
                 seriesCount += programSeance.getSeries().size();
             }
         }
-        statisticsResponse.setAverageSeanceTime(time/seances.size() / 1000);//for second
+        if (seances.isEmpty()) {
+            statisticsResponse.setAverageSeanceTime(0L);//for second
+        }else {
+            statisticsResponse.setAverageSeanceTime(time/seances.size() / 1000);//for second
+        }
         statisticsResponse.setAverageSeanceWeight(seanceWeight/seances.size());
         statisticsResponse.setAverageSeriesRep((double)numberOfRep/(double)seriesCount);
 
