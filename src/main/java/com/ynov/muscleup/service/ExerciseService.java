@@ -1,25 +1,25 @@
 package com.ynov.muscleup.service;
 
-import com.ynov.muscleup.model.Exercise;
+import com.ynov.muscleup.model.*;
 import com.ynov.muscleup.model.utils.IdRequest;
 import com.ynov.muscleup.repository.ExerciseRepository;
-import lombok.RequiredArgsConstructor;
+import com.ynov.muscleup.repository.SeanceRepository;
+import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ExerciseService {
 
     private static final Logger logger = LogManager.getLogger(ExerciseService.class);
 
-    @Autowired
-    ExerciseRepository exerciseRepository;
+    private ExerciseRepository exerciseRepository;
+    private CustomerService customerService;
+    private SeanceRepository seanceRepository;
 
     public Exercise addExercise(Exercise exercise) {
         Optional<Exercise> exerciseOptional = exerciseRepository.findByName(exercise.getName());
@@ -67,5 +67,27 @@ public class ExerciseService {
     public Exercise getExerciseById(String exerciseId) {
         Optional<Exercise> exerciseOptional = exerciseRepository.findById(exerciseId);
         return exerciseOptional.orElse(null);
+    }
+
+    public List<MyExercise> getMyExercises() {
+        Map<String, MyExercise> myExercises = new HashMap<>();
+        Customer customer = customerService.getCurrentCustomer();
+
+        for (Seance seance : seanceRepository.findAllByCustomer(customer)) {
+            Date startDate = seance.getStartDate();
+            for (ProgramSeance programSeance : seance.getProgramSeances()) {
+                String idExercise = programSeance.getExercise().getId();
+                String nameExercise = programSeance.getExercise().getName();
+                Double weight = null;
+                for (Series series : programSeance.getSeries()) {
+                    if (weight == null || series.getWeight() > weight) {
+                        weight = series.getWeight();
+                    }
+                }
+                myExercises.putIfAbsent(idExercise, new MyExercise(idExercise, nameExercise, new ArrayList<>()));
+                myExercises.get(idExercise).getHistory().add(new MyExercise.ExerciseHistory(weight, startDate));
+            }
+        }
+        return new ArrayList<>(myExercises.values());
     }
 }

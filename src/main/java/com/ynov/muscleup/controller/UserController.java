@@ -72,6 +72,11 @@ public class UserController {
         return BaseResponse.ok(exerciseService.getExercises());
     }
 
+    @GetMapping("getMyExercises")
+    public ResponseEntity<BaseResponse<List<MyExercise>>> getMyExercises() {
+        return BaseResponse.ok(exerciseService.getMyExercises());
+    }
+
     @PostMapping("/signUpToGym")
     public ResponseEntity<BaseResponse<InscriptionGym>> signUpToGym(@RequestBody IdRequest gymId) {
         if (gymId == null || gymId.getId() == null || gymId.getId().isBlank()) {
