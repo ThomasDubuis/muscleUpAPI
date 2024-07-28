@@ -3,6 +3,7 @@ package com.ynov.muscleup.controller;
 import com.ynov.muscleup.model.*;
 import com.ynov.muscleup.model.seance.SeanceRequest;
 import com.ynov.muscleup.model.BaseResponse;
+import com.ynov.muscleup.model.trophy.Trophy;
 import com.ynov.muscleup.model.utils.IdRequest;
 import com.ynov.muscleup.service.*;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +31,9 @@ public class UserController {
 
     @Autowired
     SeanceService seanceService;
+
+    @Autowired
+    TrophyService trophyService;
 
     @GetMapping("/hello")
     public ResponseEntity<BaseResponse<String>> sayHello() {
@@ -119,5 +123,10 @@ public class UserController {
             return BaseResponse.error("No seances found");
         }
         return BaseResponse.ok(seanceList);
+    }
+
+    @GetMapping("/getMyTrophy")
+    public ResponseEntity<BaseResponse<List<Trophy>>> getMyTrophy() {
+        return BaseResponse.ok(trophyService.getMyTrophy());
     }
 }
